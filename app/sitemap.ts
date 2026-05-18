@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .eq("is_active", true)
       .eq("is_verified", true)
       .order("updated_at", { ascending: false })
-      .limit(1000); // max 1000 vendor di sitemap
+      .limit(1000);
 
     const vendorPages: MetadataRoute.Sitemap = (vendors ?? []).map((v) => ({
       url: `${baseUrl}/vendor/${v.slug}`,
