@@ -242,7 +242,7 @@ export default function VendorDashboardPage() {
       setVendor(v);
       const bookRes = await fetch('/api/v1/bookings?role=vendor&per_page=8');
       const bookData = await bookRes.json();
-      const bookings: BookingItem[] = bookData.success ? (bookData.data?.data ?? []) : [];
+      const bookings: BookingItem[] = bookData.success ? (bookData.data?.bookings ?? []) : [];
       setRecentBookings(bookings);
       const pending   = bookings.filter(b => b.status === 'pending').length;
       const confirmed = bookings.filter(b => ['confirmed', 'waiting_payment', 'dp_verified'].includes(b.status)).length;
@@ -266,7 +266,6 @@ export default function VendorDashboardPage() {
 
   const handleLogout = async () => {
     await fetch('/api/v1/auth/logout', { method: 'POST' });
-    localStorage.removeItem('user');
     router.replace('/login');
   };
 
