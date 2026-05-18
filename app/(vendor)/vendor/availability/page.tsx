@@ -8,7 +8,7 @@ import {
   AlertCircle, Calendar, Info, ArrowRight, Lock,
   RotateCcw, Save, TriangleAlert,
 } from 'lucide-react';
-import Navbar from '@/components/navbar';
+import VendorShell from '@/components/vendor/VendorShell';
 type DayStatus = 'available' | 'booked' | 'blocked' | 'past' | 'empty';
 type SetStatus = 'available' | 'blocked';
 
@@ -35,7 +35,6 @@ function isToday(y: number, m: number, d: number) {
   return t.getFullYear() === y && t.getMonth() === m && t.getDate() === d;
 }
 
-// Stable module-level constants — avoids ESLint exhaustive-deps warnings
 const _today = new Date();
 _today.setHours(0, 0, 0, 0);
 const _todayStr = _today.toISOString().slice(0, 10);
@@ -259,25 +258,22 @@ export default function VendorAvailabilityPage() {
 
   if (pageLoading) {
     return (
-      <main style={{ minHeight: '100vh', background: '#f7f7f5' }}>
-        <Navbar />
-        <div style={{ maxWidth: 860, margin: '0 auto', padding: '110px 24px' }}>
+      <VendorShell>
+        <div style={{ maxWidth: 860, margin: '0 auto', padding: '28px 24px' }}>
           {[...Array(3)].map((_, i) => (
             <div key={i} style={{ height: 80, borderRadius: 14, background: 'linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite', marginBottom: 14 }} />
           ))}
         </div>
         <style>{`@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}`}</style>
-      </main>
+      </VendorShell>
     );
   }
 
   if (!vendor) return null;
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f7f7f5' }} onMouseUp={() => setIsDragging(false)}>
-      <Navbar />
-
-      <div style={{ maxWidth: 860, margin: '0 auto', padding: '96px 24px 80px' }}>
+    <VendorShell>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '28px 24px 80px' }} onMouseUp={() => setIsDragging(false)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#94a3b8', marginBottom: 28 }}>
           <Link href="/vendor/dashboard" style={{ color: '#94a3b8', textDecoration: 'none' }}>Dashboard</Link>
           <ArrowRight size={12} />
@@ -508,6 +504,6 @@ export default function VendorAvailabilityPage() {
         .avail-layout { grid-template-columns: 1fr 280px; }
         @media (max-width: 768px) { .avail-layout { grid-template-columns: 1fr !important; } }
       `}</style>
-    </main>
+    </VendorShell>
   );
 }
