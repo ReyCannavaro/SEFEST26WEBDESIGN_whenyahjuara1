@@ -16,7 +16,9 @@ export async function GET(
       .from("bookings")
       .select(
         `id, event_date, event_name, event_location, setup_time, notes,
-         status, rejection_reason, dp_verified_at, completed_at,
+         status, rejection_reason, cancellation_reason,
+         clarification_message, clarification_at,
+         dp_proof_url, dp_verified_at, completed_at,
          created_at, updated_at,
          service:services(id, name, category, price_min, price_max, unit),
          vendor:vendor_profiles(id, store_name, slug, whatsapp_number, city, address, rating_avg),
@@ -48,14 +50,9 @@ export async function GET(
     }
 
     let dp_proof_signed_url: string | null = null;
-    const { data: raw } = await supabase
-      .from("bookings")
-      .select("dp_proof_url")
-      .eq("id", id)
-      .single();
-
-    if (raw?.dp_proof_url) {
-      const storagePath = raw.dp_proof_url.replace("booking-proofs/", "");
+    const proofUrl = (booking as unknown as { dp_proof_url?: string }).dp_proof_url;
+    if (proofUrl) {
+      const storagePath = proofUrl.replace("booking-proofs/", "");
       const { data: signed } = await supabase.storage
         .from("booking-proofs")
         .createSignedUrl(storagePath, 3600);
