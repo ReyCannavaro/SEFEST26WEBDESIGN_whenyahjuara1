@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://findor.id";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://findor-azure.vercel.app/";
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl,                   lastModified: new Date(), changeFrequency: "daily",   priority: 1.0 },
