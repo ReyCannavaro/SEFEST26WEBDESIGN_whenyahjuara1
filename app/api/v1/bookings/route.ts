@@ -37,7 +37,9 @@ export async function GET(request: NextRequest) {
         .from("bookings")
         .select(
           `id, event_date, event_name, event_location, setup_time, notes,
-           status, rejection_reason, dp_proof_url, dp_verified_at, completed_at,
+           status, rejection_reason, cancellation_reason,
+           clarification_message, clarification_at,
+           dp_proof_url, dp_verified_at, completed_at,
            created_at, updated_at,
            service:services(id, name, category),
            user:user_profiles(id, full_name, email, phone)`,
@@ -64,7 +66,9 @@ export async function GET(request: NextRequest) {
       .from("bookings")
       .select(
         `id, event_date, event_name, event_location, setup_time, notes,
-         status, rejection_reason, dp_proof_url, dp_verified_at, completed_at,
+         status, rejection_reason, cancellation_reason,
+         clarification_message, clarification_at,
+         dp_proof_url, dp_verified_at, completed_at,
          created_at, updated_at,
          service:services(id, name, category),
          vendor:vendor_profiles(id, store_name, slug, whatsapp_number, city)`,
