@@ -1,17 +1,40 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-// OAuth & magic link callback
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
+  const next = searchParams.get("next");
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      if (next) {
+        return NextResponse.redirect(`${origin}${next}`);
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("user_profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        const role = profile?.role ?? "user";
+
+        if (role === "admin") {
+          return NextResponse.redirect(`${origin}/admin/vendors`);
+        }
+        if (role === "vendor") {
+          return NextResponse.redirect(`${origin}/vendor/dashboard`);
+        }
+      }
+
+      // Default: user biasa
+      return NextResponse.redirect(`${origin}/dashboard`);
     }
   }
 
