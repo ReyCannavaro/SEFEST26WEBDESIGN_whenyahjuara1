@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -9,9 +9,8 @@ import {
   RotateCcw, Save, TriangleAlert,
 } from 'lucide-react';
 import Navbar from '@/components/navbar';
-
-type DayStatus = 'available' | 'full' | 'off' | 'past' | 'empty';
-type SetStatus = 'available' | 'off';
+type DayStatus = 'available' | 'booked' | 'blocked' | 'past' | 'empty';
+type SetStatus = 'available' | 'blocked';
 
 interface VendorProfile {
   id: string;
@@ -36,6 +35,11 @@ function isToday(y: number, m: number, d: number) {
   return t.getFullYear() === y && t.getMonth() === m && t.getDate() === d;
 }
 
+// Stable module-level constants — avoids ESLint exhaustive-deps warnings
+const _today = new Date();
+_today.setHours(0, 0, 0, 0);
+const _todayStr = _today.toISOString().slice(0, 10);
+
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3800); return () => clearTimeout(t); }, [onClose]);
   return (
@@ -50,9 +54,8 @@ function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error';
 
 export default function VendorAvailabilityPage() {
   const router = useRouter();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const todayStr = today.toISOString().slice(0, 10);
+  const today = _today;
+  const todayStr = _todayStr;
   const [vendor, setVendor] = useState<VendorProfile | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
@@ -61,7 +64,7 @@ export default function VendorAvailabilityPage() {
   const [fetchLoading, setFetchLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
-  const [selectMode, setSelectMode] = useState<SetStatus>('off');
+  const [selectMode, setSelectMode] = useState<SetStatus>('blocked');
   const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
   const [isDragging, setIsDragging] = useState(false);
   const [dragValue, setDragValue] = useState<boolean>(true);
@@ -80,21 +83,19 @@ export default function VendorAvailabilityPage() {
     })();
   }, [router]);
 
-  const fetchMonth = useCallback(async (d: Date, vendorId: string) => {
+  useEffect(() => {
+    if (!vendor) return;
+    let cancelled = false;
     setFetchLoading(true);
     setPendingChanges({});
     setSelectedDates(new Set());
-    try {
-      const res = await fetch(`/api/v1/vendors/${vendorId}/availability?month=${getMonthKey(d)}`);
-      const data = await res.json();
-      if (data.success) setServerData(data.data.availability ?? {});
-    } catch { /* silent */ }
-    finally { setFetchLoading(false); }
-  }, []);
-
-  useEffect(() => {
-    if (vendor) fetchMonth(viewDate, vendor.id);
-  }, [viewDate, vendor, fetchMonth]);
+    fetch(`/api/v1/vendors/${vendor.id}/availability?month=${getMonthKey(viewDate)}`)
+      .then(r => r.json())
+      .then(data => { if (!cancelled && data.success) setServerData(data.data.availability ?? {}); })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setFetchLoading(false); });
+    return () => { cancelled = true; };
+  }, [viewDate, vendor]);
 
   function getEffectiveStatus(dateStr: string): DayStatus {
     const d = new Date(dateStr);
@@ -104,8 +105,8 @@ export default function VendorAvailabilityPage() {
       return pendingChanges[dateStr] as DayStatus;
     }
     const s = serverData[dateStr];
-    if (s === 'full') return 'full';
-    if (s === 'off') return 'off';
+    if (s === 'booked') return 'booked';
+    if (s === 'blocked') return 'blocked';
     return 'available';
   }
 
@@ -114,7 +115,7 @@ export default function VendorAvailabilityPage() {
   const goToday = () => setViewDate(new Date(today.getFullYear(), today.getMonth(), 1));
   function canSelect(dateStr: string): boolean {
     const s = getEffectiveStatus(dateStr);
-    return s !== 'past' && s !== 'full' && s !== 'empty';
+    return s !== 'past' && s !== 'booked' && s !== 'empty';
   }
 
   function toggleDate(dateStr: string) {
@@ -159,7 +160,7 @@ export default function VendorAvailabilityPage() {
     selectedDates.forEach(d => { updates[d] = selectMode; });
     setPendingChanges(prev => ({ ...prev, ...updates }));
     setSelectedDates(new Set());
-    setToast({ msg: `${selectedDates.size} tanggal ditandai "${selectMode === 'off' ? 'Libur' : 'Tersedia'}" (belum tersimpan)`, type: 'success' });
+    setToast({ msg: `${selectedDates.size} tanggal ditandai "${selectMode === 'blocked' ? 'Libur' : 'Tersedia'}" (belum tersimpan)`, type: 'success' });
   }
 
   function resetSelected() {
@@ -183,7 +184,7 @@ export default function VendorAvailabilityPage() {
     if (!vendor) return;
     const toSave = Object.entries(pendingChanges).filter(([, v]) => v !== null) as [string, SetStatus][];
     if (toSave.length === 0) { setToast({ msg: 'Tidak ada perubahan untuk disimpan.', type: 'error' }); return; }
-    const byStatus: Record<SetStatus, string[]> = { available: [], off: [] };
+    const byStatus: Record<SetStatus, string[]> = { available: [], blocked: [] };
     toSave.forEach(([d, s]) => byStatus[s].push(d));
 
     setSaveLoading(true);
@@ -235,7 +236,7 @@ export default function VendorAvailabilityPage() {
 
   const pendingCount = Object.values(pendingChanges).filter(v => v !== null).length;
 
-  const monthStats = { available: 0, off: 0, full: 0, past: 0 };
+  const monthStats = { available: 0, blocked: 0, booked: 0, past: 0 };
   for (let d = 1; d <= daysInMonth; d++) {
     const s = getEffectiveStatus(toDateStr(year, month, d));
     if (s in monthStats) monthStats[s as keyof typeof monthStats]++;
@@ -249,9 +250,9 @@ export default function VendorAvailabilityPage() {
     };
     if (status === 'empty') return { ...base, cursor: 'default' };
     if (status === 'past') return { ...base, color: '#d1d5db', background: 'transparent' };
-    if (status === 'full') return { ...base, color: '#dc2626', background: '#fee2e2', fontWeight: 700, cursor: 'not-allowed' };
-    if (isSelected) return { ...base, background: selectMode === 'off' ? '#fed7aa' : '#bbf7d0', border: `2px solid ${selectMode === 'off' ? '#ea580c' : '#16a34a'}`, fontWeight: 700, color: selectMode === 'off' ? '#c2410c' : '#15803d', cursor: 'pointer', transform: 'scale(1.06)' };
-    if (status === 'off') return { ...base, background: '#f3f4f6', color: '#6b7280', fontWeight: 600, cursor: 'pointer' };
+    if (status === 'booked') return { ...base, color: '#dc2626', background: '#fee2e2', fontWeight: 700, cursor: 'not-allowed' };
+    if (isSelected) return { ...base, background: selectMode === 'blocked' ? '#fed7aa' : '#bbf7d0', border: `2px solid ${selectMode === 'blocked' ? '#ea580c' : '#16a34a'}`, fontWeight: 700, color: selectMode === 'blocked' ? '#c2410c' : '#15803d', cursor: 'pointer', transform: 'scale(1.06)' };
+    if (status === 'blocked') return { ...base, background: '#f3f4f6', color: '#6b7280', fontWeight: 600, cursor: 'pointer' };
     // available
     return { ...base, background: todayFlag ? '#0d3b2e' : '#dcfce7', color: todayFlag ? 'white' : '#15803d', fontWeight: todayFlag ? 700 : 600, cursor: 'pointer', border: todayFlag ? '2px solid #0d3b2e' : '2px solid transparent' };
   }
@@ -363,14 +364,14 @@ export default function VendorAvailabilityPage() {
                     onMouseDown={() => handleMouseDown(dateStr)}
                     onMouseEnter={() => handleMouseEnter(dateStr)}
                     onClick={() => { if (!isDragging) toggleDate(dateStr); }}
-                    title={status === 'full' ? 'Terkunci — ada booking aktif' : status === 'past' ? 'Sudah lewat' : dateStr}
+                    title={status === 'booked' ? 'Terkunci — ada booking aktif' : status === 'past' ? 'Sudah lewat' : dateStr}
                   >
                     <span style={{ fontSize: 13, lineHeight: 1 }}>{day}</span>
                     {/* Pending indicator dot */}
                     {isPending && !isSelected && (
-                      <div style={{ position: 'absolute', bottom: 3, left: '50%', transform: 'translateX(-50%)', width: 4, height: 4, borderRadius: '50%', background: pendingChanges[dateStr] === 'off' ? '#ea580c' : '#16a34a' }} />
+                      <div style={{ position: 'absolute', bottom: 3, left: '50%', transform: 'translateX(-50%)', width: 4, height: 4, borderRadius: '50%', background: pendingChanges[dateStr] === 'blocked' ? '#ea580c' : '#16a34a' }} />
                     )}
-                    {status === 'full' && (
+                    {status === 'booked' && (
                       <Lock size={9} color="#dc2626" style={{ position: 'absolute', top: 3, right: 3 }} />
                     )}
                     {todayFlag && status !== 'past' && !isSelected && (
@@ -403,8 +404,8 @@ export default function VendorAvailabilityPage() {
               <p style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>Ringkasan Bulan</p>
               {[
                 { label: 'Tersedia', count: monthStats.available, color: '#16a34a', bg: '#f0fdf4' },
-                { label: 'Libur / Off', count: monthStats.off, color: '#6b7280', bg: '#f3f4f6' },
-                { label: 'Penuh (booking)', count: monthStats.full, color: '#dc2626', bg: '#fef2f2' },
+                { label: 'Libur / Off', count: monthStats.blocked, color: '#6b7280', bg: '#f3f4f6' },
+                { label: 'Penuh (booking)', count: monthStats.booked, color: '#dc2626', bg: '#fef2f2' },
                 { label: 'Sudah lewat', count: monthStats.past, color: '#94a3b8', bg: '#f8fafc' },
               ].map(({ label, count, color, bg }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 9, background: count > 0 ? bg : 'transparent', marginBottom: 6 }}>
@@ -423,7 +424,7 @@ export default function VendorAvailabilityPage() {
             <div style={{ background: 'white', borderRadius: 16, border: '1px solid #f1f5f9', padding: '18px 18px' }}>
               <p style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Mode Pengaturan</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {([['off', 'Tandai Libur', '#ea580c', '#fff7ed', '#fed7aa'], ['available', 'Tandai Tersedia', '#16a34a', '#f0fdf4', '#bbf7d0']] as const).map(([mode, label, color, bg, border]) => (
+                {([['blocked', 'Tandai Libur', '#ea580c', '#fff7ed', '#fed7aa'], ['available', 'Tandai Tersedia', '#16a34a', '#f0fdf4', '#bbf7d0']] as const).map(([mode, label, color, bg, border]) => (
                   <button key={mode} onClick={() => setSelectMode(mode)}
                     style={{ padding: '12px 14px', borderRadius: 10, border: `2px solid ${selectMode === mode ? color : '#e5e7eb'}`, background: selectMode === mode ? bg : 'white', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', transition: 'all 0.18s', display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${color}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -432,7 +433,7 @@ export default function VendorAvailabilityPage() {
                     <div>
                       <p style={{ fontSize: 13.5, fontWeight: 700, color: selectMode === mode ? color : '#374151' }}>{label}</p>
                       <p style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 1 }}>
-                        {mode === 'off' ? 'Blokir tanggal (istirahat, dll.)' : 'Buka tanggal yang sebelumnya off'}
+                        {mode === 'blocked' ? 'Blokir tanggal (istirahat, dll.)' : 'Buka tanggal yang sebelumnya off'}
                       </p>
                     </div>
                   </button>
@@ -465,9 +466,9 @@ export default function VendorAvailabilityPage() {
                     ))}
                   </div>
                   <button onClick={applyToSelected}
-                    style={{ width: '100%', padding: '12px 0', borderRadius: 10, background: selectMode === 'off' ? '#ea580c' : '#0d3b2e', color: 'white', fontSize: 13.5, fontWeight: 700, border: 'none', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'background 0.2s' }}>
+                    style={{ width: '100%', padding: '12px 0', borderRadius: 10, background: selectMode === 'blocked' ? '#ea580c' : '#0d3b2e', color: 'white', fontSize: 13.5, fontWeight: 700, border: 'none', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'background 0.2s' }}>
                     <CheckCircle size={15} />
-                    Tandai {selectMode === 'off' ? 'Libur' : 'Tersedia'} ({selectedDates.size})
+                    Tandai {selectMode === 'blocked' ? 'Libur' : 'Tersedia'} ({selectedDates.size})
                   </button>
                   <button onClick={resetSelected}
                     style={{ width: '100%', padding: '10px 0', borderRadius: 10, background: '#f1f5f9', color: '#64748b', fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
@@ -490,7 +491,7 @@ export default function VendorAvailabilityPage() {
                   <li>Klik atau <strong>drag</strong> untuk pilih banyak tanggal sekaligus</li>
                   <li>Klik <strong>Tandai</strong> untuk menerapkan ke tanggal dipilih</li>
                   <li>Klik <strong>Simpan</strong> untuk menyimpan ke server</li>
-                  <li>Tanggal <strong>Penuh 🔒</strong> tidak bisa diubah manual</li>
+                  <li>Tanggal <strong>Penuh</strong> tidak bisa diubah manual</li>
                 </ul>
               </div>
             </div>
