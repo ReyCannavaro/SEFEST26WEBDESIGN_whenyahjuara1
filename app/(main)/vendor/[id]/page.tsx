@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Star, CheckCircle, MapPin, Phone, ArrowRight, ArrowLeft,
+  Star, CheckCircle, MapPin, Phone,
   Heart, Share2, Calendar, ChevronLeft, ChevronRight,
   MessageCircle, Shield, Clock, Award, X, ChevronDown,
   AlertCircle, Loader2, Send, Image as ImageIcon,
@@ -276,7 +276,7 @@ function BookingModal({ vendor, service, onClose, onSuccess }: { vendor: Vendor;
             {formatPrice(service.price_min)}{service.price_max ? ` – ${formatPrice(service.price_max)}` : ''}{service.unit ? ` / ${service.unit}` : ''}
           </p>
         </div>
-=
+
         <div style={{ padding: '18px 24px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
           {error && (
             <div style={{ padding: '10px 14px', background: '#fef2f2', borderRadius: 10, border: '1px solid #fecaca', fontSize: 13, color: '#dc2626', display: 'flex', gap: 8, alignItems: 'center' }}>
