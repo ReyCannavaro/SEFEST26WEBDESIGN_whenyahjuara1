@@ -8,7 +8,7 @@ import {
   X, ChevronDown, Package, Tag, DollarSign, FileText, Ruler,
   LayoutGrid, ShoppingBag, ArrowRight, TriangleAlert,
 } from 'lucide-react';
-import Navbar from '@/components/navbar';
+import VendorShell from '@/components/vendor/VendorShell';
 
 interface Service {
   id: string;
@@ -457,25 +457,22 @@ export default function VendorServicesPage() {
 
   if (pageLoading) {
     return (
-      <main style={{ minHeight: '100vh', background: '#f7f7f5' }}>
-        <Navbar />
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '110px 24px 60px' }}>
+      <VendorShell>
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '28px 24px 60px' }}>
           {[...Array(3)].map((_, i) => (
             <div key={i} style={{ height: 140, borderRadius: 16, background: 'linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite', marginBottom: 16 }} />
           ))}
         </div>
         <style>{`@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}`}</style>
-      </main>
+      </VendorShell>
     );
   }
 
   if (!vendor) return null;
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f7f7f5' }}>
-      <Navbar />
-
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '96px 24px 80px' }}>
+    <VendorShell>
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '28px 24px 80px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#94a3b8', marginBottom: 28 }}>
           <Link href="/vendor/dashboard" style={{ color: '#94a3b8', textDecoration: 'none' }}>Dashboard</Link>
           <ArrowRight size={12} />
@@ -591,6 +588,6 @@ export default function VendorServicesPage() {
         .svc-grid { grid-template-columns: repeat(2,1fr); }
         @media (max-width: 640px) { .svc-grid { grid-template-columns: 1fr !important; } }
       `}</style>
-    </main>
+    </VendorShell>
   );
 }
