@@ -9,7 +9,7 @@ import {
   ChevronUp, ChevronDown, AlertCircle, Loader2,
   RefreshCw, Award, MapPin,
 } from 'lucide-react';
-import Navbar from '@/components/navbar';
+import VendorShell from '@/components/vendor/VendorShell';
 
 interface AnalyticsData {
   vendor: {
@@ -234,9 +234,8 @@ export default function VendorAnalyticsPage() {
   };
 
   if (loading) return (
-    <main style={{ minHeight: '100vh', background: '#f7f7f5' }}>
-      <Navbar />
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '110px 24px' }}>
+    <VendorShell>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '28px 24px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
           {[...Array(4)].map((_, i) => (
             <div key={i} style={{ height: 140, borderRadius: 16, background: 'linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
@@ -247,13 +246,12 @@ export default function VendorAnalyticsPage() {
         ))}
       </div>
       <style>{`@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}`}</style>
-    </main>
+    </VendorShell>
   );
 
   if (error) return (
-    <main style={{ minHeight: '100vh', background: '#f7f7f5' }}>
-      <Navbar />
-      <div style={{ maxWidth: 600, margin: '120px auto', padding: '0 24px', textAlign: 'center' }}>
+    <VendorShell>
+      <div style={{ maxWidth: 600, margin: '60px auto', padding: '0 24px', textAlign: 'center' }}>
         <AlertCircle size={40} color="#dc2626" style={{ marginBottom: 12 }} />
         <p style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>Gagal Memuat Data</p>
         <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>{error}</p>
@@ -261,7 +259,7 @@ export default function VendorAnalyticsPage() {
           Coba Lagi
         </button>
       </div>
-    </main>
+    </VendorShell>
   );
 
   if (!data) return null;
@@ -273,9 +271,7 @@ export default function VendorAnalyticsPage() {
   const maxServiceCount = Math.max(...services_performance.map(s => s.total_bookings), 1);
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f7f7f5' }}>
-      <Navbar />
-
+    <VendorShell>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@700;800&display=swap');
         @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
@@ -604,6 +600,6 @@ export default function VendorAnalyticsPage() {
         </p>
 
       </div>
-    </main>
+    </VendorShell>
   );
 }
