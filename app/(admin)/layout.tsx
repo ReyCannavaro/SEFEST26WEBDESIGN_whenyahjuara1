@@ -124,7 +124,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      <div className="main-area" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, marginLeft: 256 }}>
+      <div className="main-area" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, marginLeft: 256, width: "calc(100% - 256px)" }}>
 
         <header style={{ height: 58, background: "white", borderBottom: "1px solid #EBEBEB", display: "flex", alignItems: "center", padding: "0 24px", gap: 12, position: "sticky", top: 0, zIndex: 10 }}>
           <button className="mob-btn" onClick={() => setSidebarOpen(v => !v)}
@@ -146,7 +146,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <main style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
+        <main style={{ flex: 1, overflowY: "auto", padding: "24px", width: "100%" }}>
           {children}
         </main>
       </div>
