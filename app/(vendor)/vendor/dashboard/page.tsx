@@ -225,7 +225,7 @@ export default function VendorDashboardPage() {
           <StatCard icon={<CalendarCheck size={16} />} label="Booking Aktif" loading={loading}
             value={loading ? '—' : (stats?.confirmed ?? 0)} sub="Confirmed & DP" color="#3b82f6" />
           <StatCard icon={<Star size={16} />} label="Rating Toko" loading={loading}
-            value={loading ? '—' : (stats?.rating_avg ? stats.rating_avg.toFixed(1) : '—')}
+            value={loading ? '—' : (stats?.review_count ? stats.rating_avg.toFixed(1) : '—')}
             sub={stats?.review_count ? `dari ${stats.review_count} ulasan` : 'Belum ada ulasan'} color="#8b5cf6" />
         </div>
 
@@ -308,7 +308,7 @@ export default function VendorDashboardPage() {
                   ) : (
                     <div style={{ display: 'flex', gap: 20 }}>
                       <div style={{ textAlign: 'center', flex: 1 }}>
-                        <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>{vendor?.rating_avg?.toFixed(1) ?? '—'}</div>
+                        <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>{vendor?.review_count ? vendor.rating_avg.toFixed(1) : '—'}</div>
                         <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Rating</div>
                       </div>
                       <div style={{ width: 1, background: 'var(--gray-100)' }} />
