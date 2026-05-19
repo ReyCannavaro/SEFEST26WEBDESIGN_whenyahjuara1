@@ -37,11 +37,9 @@ export default function Navbar() {
     }
   }, []);
 
-  // Mount: fetch sekali
   useEffect(() => { fetchUser(); }, [fetchUser]);
 
-  // Re-fetch saat navigasi (pathname berubah)
-  useEffect(() => { fetchUser(); }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchUser(); }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -58,6 +56,21 @@ export default function Navbar() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  // Lock scroll + ESC tutup drawer
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+      document.addEventListener('keydown', onKey);
+      return () => {
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', onKey);
+      };
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [open]);
 
   const isLoggedIn = !!user;
 
@@ -311,6 +324,10 @@ export default function Navbar() {
           from { opacity: 0; transform: scale(0.93) translateY(-8px); }
           to   { opacity: 1; transform: scale(1) translateY(0); }
         }
+        @keyframes drawerIn {
+          from { opacity: 0; transform: translateY(-12px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
         .fn-dd-header {
           padding: 10px 12px 8px;
           border-bottom: 1px solid #f3f4f6;
@@ -361,7 +378,7 @@ export default function Navbar() {
 
         .fn-drawer-wrap {
           position: fixed;
-          top: 80px;
+          top: 76px;
           left: 12px; right: 12px;
           z-index: 99;
           pointer-events: all;
@@ -377,6 +394,7 @@ export default function Navbar() {
           display: flex;
           flex-direction: column;
           gap: 2px;
+          animation: drawerIn 0.22s cubic-bezier(0.22,1,0.36,1) both;
         }
         .fn-m-link {
           display: flex;
@@ -459,6 +477,12 @@ export default function Navbar() {
           .fn-toggle { display: flex !important; }
           .fn-pill { padding: 6px 6px 6px 8px; }
         }
+        @media (max-width: 480px) {
+          .fn-nav-wrapper { top: 10px; padding: 0 12px; }
+          .fn-logo-img { height: 34px; }
+          .fn-toggle { width: 38px; height: 38px; }
+          .fn-drawer-wrap { top: 66px; left: 8px; right: 8px; }
+        }
       `}</style>
 
       <div className={`fn-nav-wrapper${scrolled ? ' scrolled' : ''}`}>
@@ -525,6 +549,13 @@ export default function Navbar() {
 
         </nav>
       </div>
+
+      {open && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 98, background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }}
+          onClick={() => setOpen(false)}
+        />
+      )}
 
       {open && (
         <div className="fn-drawer-wrap">
