@@ -88,12 +88,7 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from("vendor_profiles")
-      .select(
-        `id, store_name, slug, category, description, city,
-         rating_avg, review_count, is_verified,
-         services(id, name, category, price_min, price_max, unit)`,
-        { count: "exact" }
-      )
+      .select("id, store_name, slug, category, description, city, rating_avg, review_count, is_verified", { count: "exact" })
       .eq("is_active", true)
       .eq("is_verified", true);
 
@@ -121,8 +116,31 @@ export async function GET(request: NextRequest) {
     const { data: vendors, error, count } = await query;
     if (error) return serverError(error.message);
 
+    const vendorIds = (vendors ?? []).map((v) => v.id as string);
+    let servicesMap: Record<string, unknown[]> = {};
+
+    if (vendorIds.length > 0) {
+      const { data: allServices } = await supabase
+        .from("services")
+        .select("id, vendor_id, name, category, price_min, price_max, unit")
+        .eq("is_active", true)
+        .in("vendor_id", vendorIds);
+
+      for (const svc of allServices ?? []) {
+        const vid = svc.vendor_id as string;
+        if (!servicesMap[vid]) servicesMap[vid] = [];
+        const { vendor_id: _, ...rest } = svc as Record<string, unknown>;
+        servicesMap[vid].push(rest);
+      }
+    }
+
+    const vendorsWithServices = (vendors ?? []).map((v) => ({
+      ...v,
+      services: servicesMap[v.id as string] ?? [],
+    }));
+
     return ok({
-      vendors: vendors ?? [],
+      vendors: vendorsWithServices,
       total: count ?? 0,
       page,
       per_page,
