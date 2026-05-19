@@ -34,7 +34,6 @@ function getMonthKey(d: Date) { return `${d.getFullYear()}-${String(d.getMonth()
 function getDaysInMonth(year: number, month: number) { return new Date(year, month + 1, 0).getDate(); }
 function getFirstDayOfWeek(year: number, month: number) { return new Date(year, month, 1).getDay(); }
 
-/* ── Avatar initials ── */
 function Avatar({ name, size = 36 }: { name: string | null; size?: number }) {
   const initials = (name ?? 'U').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
   const colors = ['#0d3b2e', '#1a5c44', '#16a34a', '#15803d', '#166534'];
@@ -502,7 +501,7 @@ export default function VendorDetailPage() {
                   ) : vendor.services.map(svc => {
                     const isExpanded = expandedService === svc.id;
                     return (
-                      <div key={svc.id} style={{ borderRadius: 14, border: '1.5px solid #e5e7eb', overflow: 'hidden', transition: 'border-color 0.18s', ...(isExpanded ? { borderColor: '#0d3b2e' } : {}) }}>
+                      <div key={svc.id} style={{ borderRadius: 14, borderWidth: '1.5px', borderStyle: 'solid', borderColor: isExpanded ? '#0d3b2e' : '#e5e7eb', overflow: 'hidden', transition: 'border-color 0.18s' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 18px', cursor: 'pointer', background: isExpanded ? '#f0fdf4' : 'white', transition: 'background 0.18s' }}
                           onClick={() => setExpandedService(isExpanded ? null : svc.id)}>
                           <div style={{ flex: 1 }}>
@@ -605,7 +604,6 @@ export default function VendorDetailPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, position: 'sticky', top: 90 }}>
 
-          {/* CTA Card */}
           <div style={{ background: 'white', borderRadius: 20, padding: '24px 22px', border: '1px solid #f1f5f9', boxShadow: '0 4px 24px rgba(0,0,0,0.07)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
               <div>
