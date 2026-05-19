@@ -39,7 +39,9 @@ export async function GET(request: NextRequest) {
       .range(from, to);
 
     if (status === "verified") {
-      query = query.eq("is_verified", true);
+      query = query.eq("is_verified", true).eq("is_active", true);
+    } else if (status === "inactive") {
+      query = query.eq("is_verified", true).eq("is_active", false);
     } else {
       query = query.eq("is_verified", false);
     }

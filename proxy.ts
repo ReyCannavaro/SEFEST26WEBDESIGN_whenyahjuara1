@@ -6,7 +6,6 @@ const VENDOR_ROUTES    = ["/vendor/dashboard", "/vendor/services", "/vendor/book
 const ADMIN_ROUTES     = ["/admin"];
 const GUEST_ONLY       = ["/login", "/register"];
 const ADMIN_API_ROUTES = ["/api/v1/admin"];
-
 const LOGIN_REQUIRED   = ["/vendor/register"];
 
 export async function proxy(request: NextRequest) {
@@ -59,6 +58,11 @@ export async function proxy(request: NextRequest) {
       url.searchParams.set("redirect", pathname);
       return NextResponse.redirect(url);
     }
+    const { data: profile } = await supabase
+      .from("user_profiles").select("role").eq("id", user.id).single();
+    if (profile?.role === "admin") {
+      return NextResponse.redirect(new URL("/admin/vendors", request.url));
+    }
     return supabaseResponse;
   }
 
@@ -103,6 +107,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
