@@ -7,7 +7,7 @@ import {
   ChevronDown, SlidersHorizontal, Navigation,
   Music2, Volume2, Construction, Flower2, UtensilsCrossed,
   Clapperboard, Camera, Lightbulb, Mic2, Tent, Car,
-  Sparkles, Mail, LayoutGrid, Heart, Award, Loader2,
+  Sparkles, Mail, LayoutGrid, Heart, Award, Loader2, Filter,
 } from 'lucide-react';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
@@ -43,17 +43,10 @@ interface ServiceInfo {
   id: string; name: string; category: string;
   price_min: number; price_max: number | null; unit: string | null;
 }
-
 interface Vendor {
-  id: string;
-  store_name: string;
-  slug: string;
-  category: string;
-  description: string | null;
-  city: string;
-  rating_avg: number;
-  review_count: number;
-  is_verified: boolean;
+  id: string; store_name: string; slug: string;
+  category: string; description: string | null; city: string;
+  rating_avg: number; review_count: number; is_verified: boolean;
   services: ServiceInfo[];
 }
 
@@ -70,6 +63,7 @@ function avatarColor(name: string) {
   return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
 }
 
+/* ─── Dropdown komponen ─── */
 function CustomDropdown({ value, onChange, options, icon: TriggerIcon }: {
   value: string; onChange: (v: string) => void;
   options: { label: string; Icon?: React.ComponentType<{ size?: number; color?: string }> }[];
@@ -84,24 +78,24 @@ function CustomDropdown({ value, onChange, options, icon: TriggerIcon }: {
   }, []);
   const selected = options.find(o => o.label === value);
   const SelectedIcon = selected?.Icon;
-
   return (
-    <div ref={ref} style={{ position: 'relative', minWidth: 200 }}>
-      <button onClick={() => setOpen(p => !p)} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '11px 14px', borderRadius: 12, border: open ? '1.5px solid #0d3b2e' : '1.5px solid #e5e7eb', background: open ? '#f0fdf4' : 'white', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, fontWeight: 500, color: '#111827', transition: 'all 0.18s', textAlign: 'left', boxShadow: open ? '0 0 0 3px rgba(13,59,46,0.08)' : '0 1px 4px rgba(0,0,0,0.06)' }}>
+    <div ref={ref} style={{ position: 'relative', width: '100%' }}>
+      <button onClick={() => setOpen(p => !p)} className="dd-trigger" style={{ borderColor: open ? '#0d3b2e' : '#e5e7eb', background: open ? '#f0fdf4' : 'white', boxShadow: open ? '0 0 0 3px rgba(13,59,46,0.08)' : '0 1px 4px rgba(0,0,0,0.06)' }}>
         <TriggerIcon size={15} color={open ? '#0d3b2e' : '#9ca3af'} />
-        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: value === options[0].label ? '#9ca3af' : '#111827' }}>
+        <span className="dd-value" style={{ color: value === options[0].label ? '#9ca3af' : '#111827' }}>
           {SelectedIcon ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><SelectedIcon size={14} color="#0d3b2e" /> {value}</span> : value}
         </span>
         <ChevronDown size={14} color="#9ca3af" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'none' }} />
       </button>
       {open && (
-        <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, width: '100%', minWidth: 220, background: 'white', borderRadius: 14, border: '1px solid #e5e7eb', boxShadow: '0 12px 40px rgba(0,0,0,0.12)', zIndex: 50, overflow: 'hidden' }}>
+        <div className="dd-menu">
           <div style={{ maxHeight: 280, overflowY: 'auto' }}>
             {options.map((opt, i) => {
               const OptIcon = opt.Icon;
               const isActive = opt.label === value;
               return (
-                <button key={opt.label} onClick={() => { onChange(opt.label); setOpen(false); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: isActive ? '#f0fdf4' : 'transparent', border: 'none', borderBottom: i < options.length - 1 ? '1px solid #f9fafb' : 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13.5, fontWeight: isActive ? 600 : 400, color: isActive ? '#0d3b2e' : '#374151', textAlign: 'left' }}>
+                <button key={opt.label} onClick={() => { onChange(opt.label); setOpen(false); }}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: isActive ? '#f0fdf4' : 'transparent', border: 'none', borderBottom: i < options.length - 1 ? '1px solid #f9fafb' : 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13.5, fontWeight: isActive ? 600 : 400, color: isActive ? '#0d3b2e' : '#374151', textAlign: 'left' }}>
                   {OptIcon && <OptIcon size={15} color={isActive ? '#0d3b2e' : '#9ca3af'} />}
                   <span style={{ flex: 1 }}>{opt.label}</span>
                   {isActive && <CheckCircle size={14} color="#0d3b2e" fill="#0d3b2e" />}
@@ -124,7 +118,6 @@ function KotaDropdown({ value, onChange }: { value: string; onChange: (v: string
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
   }, []);
-
   const handleDekatSaya = () => {
     setLocLoading(true);
     navigator.geolocation?.getCurrentPosition(
@@ -132,16 +125,15 @@ function KotaDropdown({ value, onChange }: { value: string; onChange: (v: string
       () => setLocLoading(false)
     );
   };
-
   return (
-    <div ref={ref} style={{ position: 'relative', minWidth: 200 }}>
-      <button onClick={() => setOpen(p => !p)} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '11px 14px', borderRadius: 12, border: open ? '1.5px solid #0d3b2e' : '1.5px solid #e5e7eb', background: open ? '#f0fdf4' : 'white', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, fontWeight: 500, color: '#111827', transition: 'all 0.18s', textAlign: 'left', boxShadow: open ? '0 0 0 3px rgba(13,59,46,0.08)' : '0 1px 4px rgba(0,0,0,0.06)' }}>
+    <div ref={ref} style={{ position: 'relative', width: '100%' }}>
+      <button onClick={() => setOpen(p => !p)} className="dd-trigger" style={{ borderColor: open ? '#0d3b2e' : '#e5e7eb', background: open ? '#f0fdf4' : 'white', boxShadow: open ? '0 0 0 3px rgba(13,59,46,0.08)' : '0 1px 4px rgba(0,0,0,0.06)' }}>
         <MapPin size={15} color={open ? '#0d3b2e' : '#9ca3af'} />
-        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: value === 'Semua Kota' ? '#9ca3af' : '#111827' }}>{value}</span>
+        <span className="dd-value" style={{ color: value === 'Semua Kota' ? '#9ca3af' : '#111827' }}>{value}</span>
         <ChevronDown size={14} color="#9ca3af" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'none' }} />
       </button>
       {open && (
-        <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, width: '100%', minWidth: 240, background: 'white', borderRadius: 14, border: '1px solid #e5e7eb', boxShadow: '0 12px 40px rgba(0,0,0,0.12)', zIndex: 50, overflow: 'hidden' }}>
+        <div className="dd-menu">
           <button onClick={handleDekatSaya} disabled={locLoading} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', background: '#f0fdf4', border: 'none', borderBottom: '1.5px solid #e5e7eb', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13.5, fontWeight: 600, color: '#0d3b2e', textAlign: 'left' }}>
             <Navigation size={15} color="#0d3b2e" />
             {locLoading ? 'Mendeteksi lokasi...' : 'Gunakan Lokasi Saya'}
@@ -150,7 +142,8 @@ function KotaDropdown({ value, onChange }: { value: string; onChange: (v: string
             {KOTA.map((kota, i) => {
               const isActive = kota === value;
               return (
-                <button key={kota} onClick={() => { onChange(kota); setOpen(false); }} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '9px 14px', background: isActive ? '#f0fdf4' : 'transparent', border: 'none', borderBottom: i < KOTA.length - 1 ? '1px solid #f9fafb' : 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13.5, fontWeight: isActive ? 600 : 400, color: isActive ? '#0d3b2e' : '#374151', textAlign: 'left' }}>
+                <button key={kota} onClick={() => { onChange(kota); setOpen(false); }}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '9px 14px', background: isActive ? '#f0fdf4' : 'transparent', border: 'none', borderBottom: i < KOTA.length - 1 ? '1px solid #f9fafb' : 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13.5, fontWeight: isActive ? 600 : 400, color: isActive ? '#0d3b2e' : '#374151', textAlign: 'left' }}>
                   {kota}
                   {isActive && <CheckCircle size={13} color="#0d3b2e" fill="#0d3b2e" />}
                 </button>
@@ -166,20 +159,11 @@ function KotaDropdown({ value, onChange }: { value: string; onChange: (v: string
 function VendorCard({ v, isHighlighting, idx }: { v: Vendor; isHighlighting: boolean; idx: number }) {
   return (
     <Link href={`/vendor/${v.slug}`} style={{ textDecoration: 'none' }}>
-      <div
-        className={`browse-card${isHighlighting ? ' card-pop' : ''}`}
-        style={{ animationDelay: isHighlighting ? `${idx * 60}ms` : '0ms' }}
-      >
-        <div style={{ position: 'relative', height: 200, overflow: 'hidden', background: avatarColor(v.store_name) }}>
-          <div style={{
-            position: 'absolute', inset: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 48, fontWeight: 800, color: 'rgba(255,255,255,0.25)',
-            fontFamily: 'Fraunces, serif',
-          }}>
+      <div className={`browse-card${isHighlighting ? ' card-pop' : ''}`} style={{ animationDelay: isHighlighting ? `${idx * 60}ms` : '0ms' }}>
+        <div style={{ position: 'relative', height: 190, overflow: 'hidden', background: avatarColor(v.store_name) }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 800, color: 'rgba(255,255,255,0.25)', fontFamily: 'Fraunces, serif' }}>
             {v.store_name[0].toUpperCase()}
           </div>
-
           {v.is_verified && (
             <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,0.95)', borderRadius: 999, padding: '4px 10px', backdropFilter: 'blur(6px)', zIndex: 2 }}>
               <CheckCircle size={11} color="#16a34a" fill="#16a34a" />
@@ -188,34 +172,29 @@ function VendorCard({ v, isHighlighting, idx }: { v: Vendor; isHighlighting: boo
           )}
           <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,0.95)', borderRadius: 999, padding: '4px 10px', backdropFilter: 'blur(6px)', zIndex: 2 }}>
             <Star size={11} fill="#f97316" color="#f97316" />
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#111827' }}>
-              {v.rating_avg > 0 ? v.rating_avg.toFixed(1) : '—'}
-            </span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#111827' }}>{v.rating_avg > 0 ? v.rating_avg.toFixed(1) : '—'}</span>
             {v.review_count > 0 && <span style={{ fontSize: 11, color: '#6b7280' }}>({v.review_count})</span>}
           </div>
           <div style={{ position: 'absolute', bottom: 12, left: 12, background: 'rgba(13,59,46,0.88)', borderRadius: 999, padding: '4px 12px', zIndex: 2 }}>
             <span style={{ fontSize: 11, fontWeight: 600, color: 'white' }}>{v.category}</span>
           </div>
         </div>
-
-        <div style={{ padding: '18px 20px' }}>
-          <p style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 5, lineHeight: 1.3 }}>{v.store_name}</p>
-          <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6, marginBottom: 12,
-            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-          }}>
+        <div style={{ padding: '16px 18px' }}>
+          <p style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', marginBottom: 4, lineHeight: 1.3 }}>{v.store_name}</p>
+          <p style={{ fontSize: 12, color: '#64748b', lineHeight: 1.6, marginBottom: 10, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {v.description ?? `${v.category} profesional di ${v.city}`}
           </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 16 }}>
-            <MapPin size={12} color="#94a3b8" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 14 }}>
+            <MapPin size={11} color="#94a3b8" />
             <span style={{ fontSize: 12, color: '#94a3b8' }}>{v.city}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f1f5f9', paddingTop: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f1f5f9', paddingTop: 12 }}>
             <div>
-              <p style={{ fontSize: 11, color: '#94a3b8', marginBottom: 2 }}>Mulai dari</p>
-              <p style={{ fontSize: 16, fontWeight: 800, color: '#0d3b2e' }}>{formatHarga(v.services)}</p>
+              <p style={{ fontSize: 10, color: '#94a3b8', marginBottom: 2 }}>Mulai dari</p>
+              <p style={{ fontSize: 15, fontWeight: 800, color: '#0d3b2e' }}>{formatHarga(v.services)}</p>
             </div>
             <span style={{ fontSize: 12, fontWeight: 700, color: '#0d3b2e', display: 'flex', alignItems: 'center', gap: 4 }}>
-              Lihat Portfolio <ArrowRight size={13} />
+              Lihat Portfolio <ArrowRight size={12} />
             </span>
           </div>
         </div>
@@ -227,16 +206,91 @@ function VendorCard({ v, isHighlighting, idx }: { v: Vendor; isHighlighting: boo
 function SkeletonCard() {
   return (
     <div style={{ background: 'white', borderRadius: 18, overflow: 'hidden', border: '1px solid #f1f5f9' }}>
-      <div style={{ height: 200, background: 'linear-gradient(90deg,#f0f0ec 25%,#e8e8e4 50%,#f0f0ec 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
-      <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <div style={{ height: 18, width: '70%', borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
-        <div style={{ height: 13, width: '100%', borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
-        <div style={{ height: 13, width: '60%', borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
+      <div style={{ height: 190, background: 'linear-gradient(90deg,#f0f0ec 25%,#e8e8e4 50%,#f0f0ec 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
+      <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ height: 17, width: '70%', borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
+        <div style={{ height: 12, width: '100%', borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
+        <div style={{ height: 12, width: '60%', borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
         <div style={{ height: 1, background: '#f1f5f9', margin: '4px 0' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ height: 20, width: 80, borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
-          <div style={{ height: 20, width: 100, borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ height: 18, width: 80, borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
+          <div style={{ height: 18, width: 100, borderRadius: 6, background: '#f0f0ec', animation: 'shimmer 1.5s infinite' }} />
         </div>
+      </div>
+    </div>
+  );
+}
+
+function FilterPanel({
+  pendingKategori, setPendingKategori,
+  pendingKota, setPendingKota,
+  pendingKategoriPill, setPendingKategoriPill,
+  handleCari, handleReset,
+  hasAppliedFilter, appliedKategori, appliedKota,
+  onClose,
+}: {
+  pendingKategori: string; setPendingKategori: (v: string) => void;
+  pendingKota: string; setPendingKota: (v: string) => void;
+  pendingKategoriPill: string; setPendingKategoriPill: (v: string) => void;
+  handleCari: () => void; handleReset: () => void;
+  hasAppliedFilter: boolean; appliedKategori: string; appliedKota: string;
+  onClose?: () => void;
+}) {
+  const activeCount = [appliedKategori !== 'Semua Kategori', appliedKota !== 'Semua Kota'].filter(Boolean).length;
+
+  return (
+    <div className="filter-panel">
+      <div className="filter-panel-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Filter size={16} color="#0d3b2e" />
+          <span style={{ fontWeight: 700, fontSize: 15, color: '#0f172a' }}>Filter</span>
+          {activeCount > 0 && (
+            <span style={{ background: '#0d3b2e', color: 'white', borderRadius: 999, padding: '2px 8px', fontSize: 11, fontWeight: 700 }}>
+              {activeCount}
+            </span>
+          )}
+        </div>
+        {onClose && (
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: 4 }}>
+            <X size={20} />
+          </button>
+        )}
+      </div>
+
+      <div className="filter-section">
+        <p className="filter-label">Kategori</p>
+        <div className="filter-kategori-list">
+          {KATEGORI.map(({ label, Icon }) => {
+            const isActive = pendingKategoriPill === label;
+            return (
+              <button
+                key={label}
+                onClick={() => { setPendingKategoriPill(label); setPendingKategori(label); }}
+                className={`filter-cat-item${isActive ? ' active' : ''}`}
+              >
+                <Icon size={14} color={isActive ? '#0d3b2e' : '#9ca3af'} />
+                <span>{label}</span>
+                {isActive && <CheckCircle size={13} color="#0d3b2e" style={{ marginLeft: 'auto', flexShrink: 0 }} />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="filter-section">
+        <p className="filter-label">Kota</p>
+        <KotaDropdown value={pendingKota} onChange={setPendingKota} />
+      </div>
+
+      <div className="filter-actions">
+        <button onClick={handleCari} className="filter-btn-apply">
+          <Search size={14} /> Terapkan Filter
+        </button>
+        {hasAppliedFilter && (
+          <button onClick={() => { handleReset(); onClose?.(); }} className="filter-btn-reset">
+            <X size={13} /> Reset
+          </button>
+        )}
       </div>
     </div>
   );
@@ -258,6 +312,7 @@ function SearchContent() {
   const [page,       setPage]       = useState(1);
   const [loading,    setLoading]    = useState(true);
   const [isHighlighting, setIsHighlighting] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const resultsRef = useRef<HTMLElement>(null);
 
@@ -267,20 +322,23 @@ function SearchContent() {
     pendingKategori !== appliedKategori;
 
   const hasAppliedFilter =
-    appliedQuery ||
+    !!(appliedQuery ||
     appliedKota     !== 'Semua Kota' ||
-    appliedKategori !== 'Semua Kategori';
+    appliedKategori !== 'Semua Kategori');
 
-  const fetchVendors = useCallback(async (
-    q: string, city: string, category: string, p: number
-  ) => {
+  const activeFilterCount = [
+    !!appliedQuery,
+    appliedKota !== 'Semua Kota',
+    appliedKategori !== 'Semua Kategori',
+  ].filter(Boolean).length;
+
+  const fetchVendors = useCallback(async (q: string, city: string, category: string, p: number) => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: String(p), per_page: '12', sort: 'rating' });
-      if (q && q.trim())                        params.set('q', q.trim());
-      if (city && city !== 'Semua Kota')        params.set('city', city);
+      if (q && q.trim())                             params.set('q', q.trim());
+      if (city && city !== 'Semua Kota')             params.set('city', city);
       if (category && category !== 'Semua Kategori') params.set('category', category);
-
       const res  = await fetch(`/api/v1/search?${params}`);
       const data = await res.json();
       if (data.success) {
@@ -292,13 +350,14 @@ function SearchContent() {
     finally { setLoading(false); }
   }, []);
 
-  useEffect(() => {
-    fetchVendors(appliedQuery, appliedKota, appliedKategori, page);
-  }, [appliedQuery, appliedKota, appliedKategori, page, fetchVendors]);
+  useEffect(() => { fetchVendors(appliedQuery, appliedKota, appliedKategori, page); }, [appliedQuery, appliedKota, appliedKategori, page, fetchVendors]);
+  useEffect(() => { fetchVendors(appliedQuery, appliedKota, appliedKategori, 1); }, []);
 
   useEffect(() => {
-    fetchVendors(appliedQuery, appliedKota, appliedKategori, 1);
-  }, []);
+    if (drawerOpen) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [drawerOpen]);
 
   const handleCari = () => {
     setPage(1);
@@ -310,7 +369,7 @@ function SearchContent() {
     if (pendingKota !== 'Semua Kota')          params.set('city',     pendingKota);
     if (pendingKategori !== 'Semua Kategori')  params.set('category', pendingKategori);
     router.replace(`/search${params.toString() ? '?' + params.toString() : ''}`, { scroll: false });
-
+    setDrawerOpen(false);
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       setTimeout(() => { setIsHighlighting(true); setTimeout(() => setIsHighlighting(false), 900); }, 650);
@@ -348,27 +407,27 @@ function SearchContent() {
     <main style={{ minHeight: '100vh', background: '#f7f7f5', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
       <Navbar />
 
-      <section style={{ position: 'relative', paddingTop: 140, paddingBottom: 80, overflow: 'hidden', minHeight: 500 }}>
+      <section style={{ position: 'relative', paddingTop: 'clamp(100px, 14vw, 140px)', paddingBottom: 'clamp(48px, 8vw, 80px)', overflow: 'hidden', minHeight: 420 }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600&q=80)', backgroundSize: 'cover', backgroundPosition: 'center 40%', filter: 'brightness(0.45)' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(110deg, rgba(13,59,46,0.82) 40%, rgba(13,59,46,0.3) 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,59,46,0.9) 0%, transparent 55%)' }} />
 
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ marginBottom: 36, animation: 'fadeUp 0.7s 0.1s both' }}>
-            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 12, letterSpacing: '0.14em', fontWeight: 700, textTransform: 'uppercase' }}>✦ Jelajahi Vendor</p>
-            <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(30px, 4vw, 54px)', fontWeight: 900, color: 'white', marginBottom: 12, letterSpacing: '-1.5px', lineHeight: 1.08 }}>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px, 4vw, 24px)' }}>
+          <div style={{ marginBottom: 28, animation: 'fadeUp 0.7s 0.1s both' }}>
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 10, letterSpacing: '0.14em', fontWeight: 700, textTransform: 'uppercase' }}>✦ Jelajahi Vendor</p>
+            <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(26px, 4vw, 54px)', fontWeight: 900, color: 'white', marginBottom: 10, letterSpacing: '-1.5px', lineHeight: 1.08 }}>
               Temukan Vendor Terbaik<br />
               <em style={{ fontStyle: 'italic', color: '#f5a623', fontWeight: 300 }}>untuk Acara Anda</em>
             </h1>
-            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', maxWidth: 460 }}>
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', maxWidth: 460 }}>
               {loading ? '...' : `${total}+`} vendor terverifikasi siap membantu mewujudkan acara impian Anda di seluruh Indonesia.
             </p>
           </div>
 
           <div style={{ animation: 'fadeUp 0.7s 0.22s both' }}>
-            <div style={{ background: 'white', borderRadius: 18, padding: '16px 20px', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', boxShadow: '0 20px 60px rgba(0,0,0,0.22)', maxWidth: 900 }}>
+            <div className="search-bar-box">
               <div
-                style={{ display: 'flex', alignItems: 'center', gap: 10, flex: '1 1 220px', padding: '9px 14px', borderRadius: 12, border: '1.5px solid #e5e7eb', background: '#fafafa' }}
+                className="search-input-wrap"
                 onFocusCapture={e => (e.currentTarget.style.borderColor = '#0d3b2e')}
                 onBlurCapture={e => (e.currentTarget.style.borderColor = '#e5e7eb')}
               >
@@ -378,34 +437,33 @@ function SearchContent() {
                   onChange={e => setPendingQuery(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleCari()}
                   placeholder="Cari nama vendor atau layanan..."
-                  style={{ border: 'none', outline: 'none', flex: 1, fontSize: 14, color: '#111827', background: 'transparent', fontFamily: 'inherit' }}
+                  className="search-input"
                 />
-                {pendingQuery && <button onClick={() => setPendingQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#9ca3af' }}><X size={14} /></button>}
+                {pendingQuery && (
+                  <button onClick={() => setPendingQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#9ca3af' }}>
+                    <X size={14} />
+                  </button>
+                )}
               </div>
 
-              <div style={{ flex: '0 1 220px' }}>
+              <div className="search-bar-dropdowns">
                 <CustomDropdown value={pendingKategori} onChange={v => { setPendingKategori(v); setPendingKategoriPill(v); }} options={KATEGORI} icon={SlidersHorizontal} />
-              </div>
-
-              <div style={{ flex: '0 1 200px' }}>
                 <KotaDropdown value={pendingKota} onChange={setPendingKota} />
               </div>
 
-              <button
-                onClick={handleCari}
-                style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8, padding: '12px 22px', borderRadius: 12, background: hasPendingChange ? '#0d3b2e' : '#1a5c44', color: 'white', fontSize: 14, fontWeight: 700, border: 'none', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'all 0.2s', boxShadow: hasPendingChange ? '0 4px 14px rgba(13,59,46,0.35)' : 'none', transform: hasPendingChange ? 'scale(1.02)' : 'scale(1)' }}
-              >
-                <Search size={15} /> Cari Vendor
+              <button onClick={handleCari} className="search-btn-cari" style={{ background: hasPendingChange ? '#0d3b2e' : '#1a5c44', boxShadow: hasPendingChange ? '0 4px 14px rgba(13,59,46,0.35)' : 'none', transform: hasPendingChange ? 'scale(1.02)' : 'scale(1)' }}>
+                <Search size={15} /> <span>Cari Vendor</span>
               </button>
             </div>
           </div>
 
-          <div style={{ marginTop: 22, display: 'flex', gap: 8, flexWrap: 'wrap', animation: 'fadeUp 0.7s 0.35s both' }}>
+          <div className="hero-pills" style={{ animation: 'fadeUp 0.7s 0.35s both' }}>
             {KATEGORI.slice(0, 8).map(({ label, Icon }) => {
               const isActive = pendingKategoriPill === label;
               return (
-                <button key={label} onClick={() => handlePillClick(label)} style={{ padding: '7px 14px', borderRadius: 100, border: `1.5px solid ${isActive ? '#f5a623' : 'rgba(255,255,255,0.18)'}`, background: isActive ? '#f5a623' : 'rgba(255,255,255,0.09)', color: isActive ? '#0d3b2e' : 'rgba(255,255,255,0.78)', fontSize: 12, fontWeight: 600, cursor: 'pointer', backdropFilter: 'blur(8px)', transition: 'all 0.18s', fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Icon size={13} /> {label}
+                <button key={label} onClick={() => handlePillClick(label)}
+                  className={`hero-pill${isActive ? ' active' : ''}`}>
+                  <Icon size={12} /> {label}
                 </button>
               );
             })}
@@ -413,113 +471,364 @@ function SearchContent() {
         </div>
       </section>
 
-      <section ref={resultsRef} className={isHighlighting ? 'results-highlight' : ''} style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px 80px', borderRadius: 20, transition: 'background 0.3s' }}>
-        {/* Result header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 8 }}>
-              {loading
-                ? <><Loader2 size={16} style={{ animation: 'spin 0.7s linear infinite' }} /> Mencari vendor...</>
-                : <>{total} vendor ditemukan{hasAppliedFilter && <span style={{ fontWeight: 400, color: '#64748b', fontSize: 14 }}> — dari filter yang dipilih</span>}</>
-              }
-            </p>
-            {hasAppliedFilter && (
-              <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                {appliedQuery && (
-                  <span style={{ fontSize: 12, background: '#f0fdf4', color: '#16a34a', padding: '3px 10px', borderRadius: 999, fontWeight: 600, border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <Search size={10} /> &quot;{appliedQuery}&quot;
-                    <button onClick={() => removeFilter('q')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#16a34a' }}><X size={10} /></button>
-                  </span>
-                )}
-                {appliedKategori !== 'Semua Kategori' && (
-                  <span style={{ fontSize: 12, background: '#f0fdf4', color: '#16a34a', padding: '3px 10px', borderRadius: 999, fontWeight: 600, border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <SlidersHorizontal size={10} /> {appliedKategori}
-                    <button onClick={() => removeFilter('category')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#16a34a' }}><X size={10} /></button>
-                  </span>
-                )}
-                {appliedKota !== 'Semua Kota' && (
-                  <span style={{ fontSize: 12, background: '#f0fdf4', color: '#16a34a', padding: '3px 10px', borderRadius: 999, fontWeight: 600, border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <MapPin size={10} /> {appliedKota}
-                    <button onClick={() => removeFilter('city')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#16a34a' }}><X size={10} /></button>
-                  </span>
-                )}
-                <button onClick={handleReset} style={{ fontSize: 12, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, padding: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <X size={11} /> Reset semua filter
-                </button>
-              </div>
+      <section ref={resultsRef} className={isHighlighting ? 'results-highlight' : ''} style={{ maxWidth: 1200, margin: '0 auto', padding: 'clamp(24px, 4vw, 40px) clamp(16px, 4vw, 24px) 80px', transition: 'background 0.3s' }}>
+        <div className="mobile-filter-fab-row">
+          <button onClick={() => setDrawerOpen(true)} className="mobile-filter-btn">
+            <Filter size={16} />
+            Filter
+            {activeFilterCount > 0 && <span className="fab-badge">{activeFilterCount}</span>}
+          </button>
+
+          <div className="mobile-chips">
+            {appliedQuery && (
+              <span className="chip"><Search size={10} /> &quot;{appliedQuery}&quot;<button onClick={() => removeFilter('q')} className="chip-x"><X size={9} /></button></span>
             )}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#94a3b8' }}>
-            <Award size={14} /> Diurutkan: Rating Tertinggi
+            {appliedKategori !== 'Semua Kategori' && (
+              <span className="chip"><SlidersHorizontal size={10} /> {appliedKategori}<button onClick={() => removeFilter('category')} className="chip-x"><X size={9} /></button></span>
+            )}
+            {appliedKota !== 'Semua Kota' && (
+              <span className="chip"><MapPin size={10} /> {appliedKota}<button onClick={() => removeFilter('city')} className="chip-x"><X size={9} /></button></span>
+            )}
           </div>
         </div>
 
-        {loading ? (
-          <div className="browse-grid">
-            {Array(6).fill(0).map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : vendors.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '80px 0' }}>
-            <div style={{ width: 56, height: 56, background: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-              <Search size={24} color="#94a3b8" />
-            </div>
-            <p style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Vendor tidak ditemukan</p>
-            <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 24 }}>Coba ubah kata kunci, kategori, atau kota yang Anda cari.</p>
-            <button onClick={handleReset} style={{ padding: '11px 28px', borderRadius: 999, background: '#0d3b2e', color: 'white', fontSize: 14, fontWeight: 700, border: 'none', cursor: 'pointer' }}>
-              Tampilkan Semua Vendor
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="browse-grid">
-              {vendors.map((v, idx) => (
-                <VendorCard key={v.id} v={v} isHighlighting={isHighlighting} idx={idx} />
-              ))}
+        <div className="results-layout">
+          <aside className="sidebar-desktop">
+            <FilterPanel
+              pendingKategori={pendingKategori} setPendingKategori={setPendingKategori}
+              pendingKota={pendingKota} setPendingKota={setPendingKota}
+              pendingKategoriPill={pendingKategoriPill} setPendingKategoriPill={setPendingKategoriPill}
+              handleCari={handleCari} handleReset={handleReset}
+              hasAppliedFilter={hasAppliedFilter}
+              appliedKategori={appliedKategori} appliedKota={appliedKota}
+            />
+          </aside>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 10 }}>
+              <div>
+                <p style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {loading
+                    ? <><Loader2 size={15} style={{ animation: 'spin 0.7s linear infinite' }} /> Mencari vendor...</>
+                    : <>{total} vendor ditemukan{hasAppliedFilter && <span style={{ fontWeight: 400, color: '#64748b', fontSize: 13 }}> — dari filter</span>}</>
+                  }
+                </p>
+                {hasAppliedFilter && (
+                  <div className="desktop-chips">
+                    {appliedQuery && (
+                      <span className="chip"><Search size={10} /> &quot;{appliedQuery}&quot;<button onClick={() => removeFilter('q')} className="chip-x"><X size={9} /></button></span>
+                    )}
+                    {appliedKategori !== 'Semua Kategori' && (
+                      <span className="chip"><SlidersHorizontal size={10} /> {appliedKategori}<button onClick={() => removeFilter('category')} className="chip-x"><X size={9} /></button></span>
+                    )}
+                    {appliedKota !== 'Semua Kota' && (
+                      <span className="chip"><MapPin size={10} /> {appliedKota}<button onClick={() => removeFilter('city')} className="chip-x"><X size={9} /></button></span>
+                    )}
+                    <button onClick={handleReset} className="chip chip-reset"><X size={10} /> Reset semua</button>
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8', flexShrink: 0 }}>
+                <Award size={13} /> Rating Tertinggi
+              </div>
             </div>
 
-            {totalPages > 1 && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 40 }}>
-                <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  style={{ padding: '10px 20px', borderRadius: 100, border: '1px solid #e5e7eb', background: 'white', fontSize: 13, fontWeight: 600, color: page === 1 ? '#d1d5db' : '#374151', cursor: page === 1 ? 'not-allowed' : 'pointer', transition: 'all 0.15s' }}
-                >
-                  ← Sebelumnya
-                </button>
-                <span style={{ fontSize: 13, color: '#94a3b8', padding: '0 8px' }}>{page} / {totalPages}</span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  style={{ padding: '10px 20px', borderRadius: 100, border: '1px solid #e5e7eb', background: 'white', fontSize: 13, fontWeight: 600, color: page === totalPages ? '#d1d5db' : '#374151', cursor: page === totalPages ? 'not-allowed' : 'pointer', transition: 'all 0.15s' }}
-                >
-                  Berikutnya →
+            {loading ? (
+              <div className="browse-grid">
+                {Array(6).fill(0).map((_, i) => <SkeletonCard key={i} />)}
+              </div>
+            ) : vendors.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                <div style={{ width: 56, height: 56, background: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                  <Search size={24} color="#94a3b8" />
+                </div>
+                <p style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Vendor tidak ditemukan</p>
+                <p style={{ fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>Coba ubah kata kunci, kategori, atau kota yang Anda cari.</p>
+                <button onClick={handleReset} style={{ padding: '11px 28px', borderRadius: 999, background: '#0d3b2e', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer' }}>
+                  Tampilkan Semua Vendor
                 </button>
               </div>
+            ) : (
+              <>
+                <div className="browse-grid">
+                  {vendors.map((v, idx) => (
+                    <VendorCard key={v.id} v={v} isHighlighting={isHighlighting} idx={idx} />
+                  ))}
+                </div>
+                {totalPages > 1 && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 40 }}>
+                    <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="page-btn" style={{ color: page === 1 ? '#d1d5db' : '#374151', cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
+                      ← Sebelumnya
+                    </button>
+                    <span style={{ fontSize: 13, color: '#94a3b8', padding: '0 8px' }}>{page} / {totalPages}</span>
+                    <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="page-btn" style={{ color: page === totalPages ? '#d1d5db' : '#374151', cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
+                      Berikutnya →
+                    </button>
+                  </div>
+                )}
+              </>
             )}
-          </>
-        )}
+          </div>
+        </div>
       </section>
+
+      {drawerOpen && (
+        <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)}>
+          <div className="drawer-panel" onClick={e => e.stopPropagation()}>
+            <div className="drawer-handle" />
+            <FilterPanel
+              pendingKategori={pendingKategori} setPendingKategori={setPendingKategori}
+              pendingKota={pendingKota} setPendingKota={setPendingKota}
+              pendingKategoriPill={pendingKategoriPill} setPendingKategoriPill={setPendingKategoriPill}
+              handleCari={handleCari} handleReset={handleReset}
+              hasAppliedFilter={hasAppliedFilter}
+              appliedKategori={appliedKategori} appliedKota={appliedKota}
+              onClose={() => setDrawerOpen(false)}
+            />
+          </div>
+        </div>
+      )}
 
       <Footer />
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,800;1,9..144,300&display=swap');
+
         @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes shimmer  { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
         @keyframes spin     { to{transform:rotate(360deg)} }
         @keyframes sectionFlash { 0%{background:transparent} 30%{background:rgba(13,59,46,0.06)} 100%{background:transparent} }
         @keyframes cardPop  { 0%{transform:translateY(10px) scale(0.98);opacity:0.6} 60%{transform:translateY(-3px) scale(1.01);opacity:1} 100%{transform:translateY(0) scale(1);opacity:1} }
+        @keyframes slideUp  { from{transform:translateY(100%)} to{transform:translateY(0)} }
+
+        /* ── Search bar ── */
+        .search-bar-box {
+          background: white; border-radius: 18px;
+          padding: 14px 16px;
+          display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.22); max-width: 900px;
+        }
+        .search-input-wrap {
+          display: flex; align-items: center; gap: 10;
+          flex: 1 1 200px; padding: 9px 14px;
+          border-radius: 12px; border: 1.5px solid #e5e7eb; background: #fafafa;
+          transition: border-color 0.18s;
+          min-width: 0;
+        }
+        .search-input {
+          border: none; outline: none; flex: 1; font-size: 14px;
+          color: #111827; background: transparent; font-family: inherit;
+          min-width: 0;
+        }
+        .search-bar-dropdowns {
+          display: flex; gap: 10px; flex: 0 1 420px; flex-wrap: wrap;
+        }
+        .search-bar-dropdowns > * { flex: 1 1 180px; min-width: 0; }
+        .search-btn-cari {
+          flex-shrink: 0; display: flex; align-items: center; gap: 8px;
+          padding: 12px 20px; border-radius: 12px;
+          color: white; font-size: 14px; font-weight: 700;
+          border: none; cursor: pointer; font-family: inherit;
+          white-space: nowrap; transition: all 0.2s;
+        }
+        .search-btn-cari span { display: inline; }
+
+        /* Pills */
+        .hero-pills {
+          margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .hero-pill {
+          padding: 6px 13px; border-radius: 100px;
+          border: 1.5px solid rgba(255,255,255,0.18);
+          background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.78);
+          font-size: 12px; font-weight: 600; cursor: pointer;
+          backdrop-filter: blur(8px); transition: all 0.18s;
+          font-family: inherit; white-space: nowrap;
+          display: flex; align-items: center; gap: 5px;
+        }
+        .hero-pill.active {
+          border-color: #f5a623; background: #f5a623; color: #0d3b2e;
+        }
+
+        /* ── Results layout ── */
+        .results-layout {
+          display: flex; gap: 28px; align-items: flex-start;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar-desktop {
+          width: 260px; flex-shrink: 0;
+          position: sticky; top: 90px;
+        }
+        .filter-panel {
+          background: white; border-radius: 18px;
+          border: 1px solid #f1f5f9;
+          overflow: hidden;
+        }
+        .filter-panel-header {
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 16px 18px; border-bottom: 1px solid #f1f5f9;
+        }
+        .filter-section {
+          padding: 16px 18px; border-bottom: 1px solid #f1f5f9;
+        }
+        .filter-label {
+          font-size: 11px; font-weight: 700; color: #94a3b8;
+          text-transform: uppercase; letter-spacing: 0.08em;
+          margin-bottom: 10px;
+        }
+        .filter-kategori-list {
+          display: flex; flex-direction: column; gap: 2px;
+          max-height: 320px; overflow-y: auto;
+        }
+        .filter-cat-item {
+          display: flex; align-items: center; gap: 8px;
+          padding: 8px 10px; border-radius: 10px;
+          border: none; background: transparent;
+          font-size: 13px; font-weight: 400; color: #374151;
+          cursor: pointer; font-family: inherit; text-align: left;
+          transition: background 0.15s;
+        }
+        .filter-cat-item:hover { background: #f9fafb; }
+        .filter-cat-item.active { background: #f0fdf4; color: #0d3b2e; font-weight: 600; }
+        .filter-actions {
+          padding: 14px 18px; display: flex; flex-direction: column; gap: 8px;
+        }
+        .filter-btn-apply {
+          display: flex; align-items: center; justify-content: center; gap: 7px;
+          padding: 11px; border-radius: 12px;
+          background: #0d3b2e; color: white;
+          font-size: 13px; font-weight: 700; border: none; cursor: pointer;
+          font-family: inherit; transition: background 0.2s;
+        }
+        .filter-btn-apply:hover { background: #1a5c44; }
+        .filter-btn-reset {
+          display: flex; align-items: center; justify-content: center; gap: 6px;
+          padding: 9px; border-radius: 12px;
+          background: #fff1f2; color: #ef4444;
+          font-size: 12px; font-weight: 600; border: none; cursor: pointer;
+          font-family: inherit;
+        }
+
+        /* Dropdown shared */
+        .dd-trigger {
+          width: 100%; display: flex; align-items: center; gap: 8px;
+          padding: 10px 12px; border-radius: 12px; border: 1.5px solid;
+          cursor: pointer; font-family: inherit; font-size: 13px;
+          font-weight: 500; color: #111827; transition: all 0.18s; text-align: left;
+        }
+        .dd-value { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dd-menu {
+          position: absolute; top: calc(100% + 6px); left: 0; width: 100%;
+          min-width: 220px; background: white; border-radius: 14px;
+          border: 1px solid #e5e7eb; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+          z-index: 50; overflow: hidden;
+        }
+
+        /* ── Chips ── */
+        .chip {
+          font-size: 11px; background: #f0fdf4; color: #16a34a;
+          padding: 3px 8px 3px 10px; border-radius: 999px;
+          font-weight: 600; border: 1px solid #bbf7d0;
+          display: inline-flex; align-items: center; gap: 4px;
+          white-space: nowrap;
+        }
+        .chip-reset {
+          background: #fff1f2; color: #ef4444; border-color: #fecaca;
+        }
+        .chip-x {
+          background: none; border: none; cursor: pointer;
+          padding: 0 2px; display: flex; color: inherit; opacity: 0.7;
+          line-height: 1;
+        }
+        .chip-x:hover { opacity: 1; }
+
+        .desktop-chips { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+        .mobile-chips  { display: flex; gap: 6px; flex-wrap: wrap; overflow-x: auto; }
+
+        /* ── Mobile filter row (FAB) ── */
+        .mobile-filter-fab-row {
+          display: none;
+          align-items: center; gap: 10px;
+          margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .mobile-filter-btn {
+          display: flex; align-items: center; gap: 6px;
+          padding: 9px 16px; border-radius: 100px;
+          background: white; border: 1.5px solid #e5e7eb;
+          font-size: 13px; font-weight: 700; color: #0d3b2e;
+          cursor: pointer; font-family: inherit;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+          position: relative; flex-shrink: 0;
+        }
+        .fab-badge {
+          position: absolute; top: -5px; right: -5px;
+          background: #0d3b2e; color: white;
+          width: 18px; height: 18px; border-radius: 50%;
+          font-size: 10px; font-weight: 800;
+          display: flex; align-items: center; justify-content: center;
+        }
+
+        /* ── Drawer ── */
+        .drawer-backdrop {
+          position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+          z-index: 200; display: flex; align-items: flex-end;
+          backdrop-filter: blur(2px);
+        }
+        .drawer-panel {
+          background: white; border-radius: 24px 24px 0 0;
+          width: 100%; max-height: 88vh;
+          overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1);
+          padding-bottom: 32px;
+        }
+        .drawer-handle {
+          width: 40px; height: 4px; background: #e5e7eb;
+          border-radius: 2px; margin: 14px auto 6px;
+        }
+
+        /* ── Vendor grid ── */
+        .browse-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+        .browse-card {
+          background: white; border-radius: 18px; overflow: hidden;
+          border: 1px solid #f1f5f9;
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          cursor: pointer;
+        }
+        .browse-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.10); }
+
         .results-highlight { animation: sectionFlash 0.9s ease forwards; }
         .card-pop { animation: cardPop 0.4s ease both; }
-        .browse-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .browse-card { background: white; border-radius: 18px; overflow: hidden; border: 1px solid #f1f5f9; transition: transform 0.25s ease, box-shadow 0.25s ease; cursor: pointer; }
-        .browse-card:hover { transform: translateY(-5px); box-shadow: 0 16px 48px rgba(0,0,0,0.10); }
-        @media (max-width: 1024px) { .browse-grid { grid-template-columns: repeat(2,1fr); } }
-        @media (max-width: 640px)  { .browse-grid { grid-template-columns: 1fr; } }
+
+        .page-btn {
+          padding: 9px 18px; border-radius: 100px;
+          border: 1px solid #e5e7eb; background: white;
+          font-size: 13px; font-weight: 600;
+          transition: all 0.15s; font-family: inherit;
+        }
+
+        /* Tablet ≤1024px: sidebar collapse, 2-col grid */
+        @media (max-width: 1024px) {
+          .sidebar-desktop { display: none; }
+          .mobile-filter-fab-row { display: flex; }
+          .desktop-chips { display: none; }
+          .browse-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+          .search-bar-dropdowns { display: none; }
+        }
+        @media (max-width: 640px) {
+          .browse-grid { grid-template-columns: 1fr; gap: 14px; }
+          .search-btn-cari span { display: none; }
+          .search-btn-cari { padding: 12px 14px; }
+          .hero-pills { display: none; }
+        }
       `}</style>
     </main>
   );
 }
+
 export default function SearchPage() {
   return (
     <Suspense fallback={<div style={{ minHeight: '100vh', background: '#f7f7f5' }} />}>
