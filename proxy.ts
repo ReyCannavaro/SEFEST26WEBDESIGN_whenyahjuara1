@@ -30,12 +30,16 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
   const pathname = request.nextUrl.pathname;
+  const getRole = async () => {
+    if (!user) return null;
+    const { data } = await supabase
+      .from("user_profiles").select("role").eq("id", user.id).single();
+    return data?.role ?? "user";
+  };
 
   if (GUEST_ONLY.some((r) => pathname.startsWith(r))) {
     if (user) {
-      const { data: profile } = await supabase
-        .from("user_profiles").select("role").eq("id", user.id).single();
-      const role = profile?.role ?? "user";
+      const role = await getRole();
       if (role === "admin")  return NextResponse.redirect(new URL("/admin/vendors", request.url));
       if (role === "vendor") return NextResponse.redirect(new URL("/vendor/dashboard", request.url));
       return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -58,9 +62,8 @@ export async function proxy(request: NextRequest) {
       url.searchParams.set("redirect", pathname);
       return NextResponse.redirect(url);
     }
-    const { data: profile } = await supabase
-      .from("user_profiles").select("role").eq("id", user.id).single();
-    if (profile?.role === "admin") {
+    const role = await getRole();
+    if (role === "admin") {
       return NextResponse.redirect(new URL("/admin/vendors", request.url));
     }
     return supabaseResponse;
@@ -72,19 +75,22 @@ export async function proxy(request: NextRequest) {
       url.searchParams.set("redirect", pathname);
       return NextResponse.redirect(url);
     }
-    const { data: profile } = await supabase
-      .from("user_profiles").select("role").eq("id", user.id).single();
-    if (!profile || profile.role !== "vendor") {
+    const role = await getRole();
+    if (role === "admin") return supabaseResponse;
+    if (role !== "vendor") {
       return NextResponse.redirect(new URL("/vendor/register", request.url));
     }
     return supabaseResponse;
   }
 
   if (ADMIN_ROUTES.some((r) => pathname.startsWith(r)) && !pathname.startsWith("/api")) {
-    if (!user) return NextResponse.redirect(new URL("/login", request.url));
-    const { data: profile } = await supabase
-      .from("user_profiles").select("role").eq("id", user.id).single();
-    if (!profile || profile.role !== "admin") {
+    if (!user) {
+      const url = new URL("/login", request.url);
+      url.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(url);
+    }
+    const role = await getRole();
+    if (role !== "admin") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return supabaseResponse;
@@ -94,9 +100,8 @@ export async function proxy(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
-    const { data: profile } = await supabase
-      .from("user_profiles").select("role").eq("id", user.id).single();
-    if (!profile || profile.role !== "admin") {
+    const role = await getRole();
+    if (role !== "admin") {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
     return supabaseResponse;
