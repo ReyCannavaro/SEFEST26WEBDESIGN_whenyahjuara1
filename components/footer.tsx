@@ -127,7 +127,7 @@ export default function Footer() {
             flexWrap: 'wrap', gap: 12,
           }}>
             <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>
-              © 2024 Findor Marketplace · The Curated Gallery for Premium Events.
+              © 2026 Findor Marketplace · The Curated Gallery for Premium Events.
             </p>
             <div className="footer-legal">
               {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(l => (
