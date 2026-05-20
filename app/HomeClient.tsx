@@ -17,7 +17,7 @@ const SLIDES = [
     image: '/hero/wedding.jpg',
     headlinePart1: 'Wujudkan Event',
     headlineItalic: 'Impian',
-    headlinePart2: 'Tanpa Kompromi',
+    headlinePart2: 'Tanpa Hambatan',
     subtext: 'Temukan vendor pernikahan, dekorasi, catering, dan fotografer terbaik — semua di satu platform.',
   },
   {
@@ -211,7 +211,7 @@ function HeroSection() {
         .hero-content-wrapper {
           position: relative; z-index: 2;
           max-width: 1200px; margin: 0 auto;
-          padding: 80px clamp(20px, 5vw, 48px) 200px;
+          padding: 110px clamp(20px, 5vw, 48px) 200px;
           width: 100%; height: 100%; display: flex; align-items: center;
         }
         .hero-text-block { max-width: 620px; }
