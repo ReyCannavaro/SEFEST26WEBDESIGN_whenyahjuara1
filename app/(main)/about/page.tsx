@@ -38,7 +38,7 @@ export default function AboutPage() {
       <Navbar />
 
       <section className="about-hero">
-        <img src="/about/hero.jpg" alt="" className="about-hero-img" />
+        <img src="/about/hero.JPG" alt="" className="about-hero-img" />
         <div className="about-hero-overlay1" />
         <div className="about-hero-overlay2" />
         <div className="about-hero-content">
@@ -102,7 +102,7 @@ export default function AboutPage() {
             </div>
 
             <div className="story-img-wrap">
-              <img src="/about/story.jpg" alt="Findor story" className="story-img" />
+              <img src="/about/story.JPG" alt="Findor story" className="story-img" />
               <div className="story-img-badge">
                 <MapPin size={16} color="var(--amber)" />
                 <div>
@@ -179,7 +179,7 @@ export default function AboutPage() {
       <section className="about-section about-section-gray">
         <div className="about-container">
           <div className="about-cta-box">
-            <img src="/about/cta.jpg" alt="" className="about-cta-img" />
+            <img src="/about/cta.JPG" alt="" className="about-cta-img" />
             <div className="about-cta-overlay" />
             <div style={{ position: 'relative', zIndex: 2 }}>
               <h2 className="about-cta-title">

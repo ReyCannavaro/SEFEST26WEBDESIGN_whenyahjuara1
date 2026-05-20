@@ -84,7 +84,7 @@ export default function HowItWorksPage() {
       <Navbar />
 
       <section className="hiw-hero">
-        <img src="/how-it-works/hero.jpg" alt="" className="hiw-hero-img" />
+        <img src="/how-it-works/hero.JPG" alt="" className="hiw-hero-img" />
         <div className="hiw-hero-overlay1" />
         <div className="hiw-hero-overlay2" />
 
@@ -195,7 +195,7 @@ export default function HowItWorksPage() {
           </div>
 
           <div className="hiw-cta-box">
-            <img src="/how-it-works/cta.jpg" alt="" className="hiw-cta-img" />
+            <img src="/how-it-works/cta.JPG" alt="" className="hiw-cta-img" />
             <div className="hiw-cta-overlay" />
             <div className="hiw-cta-text">
               <h3 className="hiw-cta-title">Ada pertanyaan soal aturan ini?</h3>
