@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { RegisterSchema } from "@/lib/validators";
 import {
   badRequest,
@@ -40,6 +41,28 @@ export async function POST(request: NextRequest) {
 
     if (!data.user) {
       return serverError("Gagal membuat akun. Coba lagi.");
+    }
+
+    const adminClient = createAdminClient();
+    const { error: profileError } = await adminClient
+      .from("user_profiles")
+      .upsert(
+        {
+          id: data.user.id,
+          email: data.user.email!,
+          full_name: full_name.trim(),
+          role: "user",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "id",
+          ignoreDuplicates: true,
+        }
+      );
+
+    if (profileError) {
+      console.error("[register] upsert user_profiles failed:", profileError.message);
     }
 
     return created({
