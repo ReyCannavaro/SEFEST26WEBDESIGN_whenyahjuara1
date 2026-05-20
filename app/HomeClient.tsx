@@ -526,7 +526,6 @@ export default function HomeClient() {
       </section>
 
       <style>{`
-        /* Layout */
         .container {
           max-width: 1200px;
           margin: 0 auto;
@@ -536,7 +535,6 @@ export default function HomeClient() {
         .bg-white { background: var(--white); }
         .bg-gray { background: var(--gray-50); }
 
-        /* Section headers */
         .section-header {
           display: flex; justify-content: space-between;
           align-items: flex-end; margin-bottom: 36px;
@@ -555,7 +553,6 @@ export default function HomeClient() {
           text-decoration: none; white-space: nowrap; flex-shrink: 0;
         }
 
-        /* Category Bento */
         .cat-bento {
           display: grid;
           grid-template-columns: 1fr 2fr;
@@ -634,7 +631,6 @@ export default function HomeClient() {
         }
         .cat-card:hover .cat-img { transform: scale(1.06); }
 
-        /* Tablet: 900px */
         @media (max-width: 900px) {
           .cat-bento {
             grid-template-columns: 1fr 1fr;
@@ -644,7 +640,6 @@ export default function HomeClient() {
           .cat-small-grid { grid-column: 2; grid-row: 1; }
           .cat-wide { grid-column: 1 / 3; grid-row: 2; }
         }
-        /* Mobile: 600px */
         @media (max-width: 600px) {
           .cat-bento { grid-template-columns: 1fr; }
           .cat-featured { grid-row: auto; min-height: 240px; }
@@ -661,7 +656,6 @@ export default function HomeClient() {
           .cat-wide-btn { width: 100%; justify-content: center; }
         }
 
-        /* Vendor grid */
         .vendor-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
@@ -676,7 +670,6 @@ export default function HomeClient() {
         @media (max-width: 1024px) { .vendor-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 480px) { .vendor-grid { grid-template-columns: 1fr; } }
 
-        /* Trust */
         .trust-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -696,7 +689,6 @@ export default function HomeClient() {
           .trust-images { max-width: 100%; }
         }
 
-        /* CTA */
         .cta-section {
           padding: clamp(60px, 10vw, 100px) clamp(16px, 4vw, 24px);
           background: var(--forest);
@@ -726,7 +718,6 @@ export default function HomeClient() {
           .cta-buttons a { text-align: center; }
         }
 
-        /* Shimmer */
         @keyframes shimmer {
           0% { background-position: 200% 0; }
           100% { background-position: -200% 0; }
