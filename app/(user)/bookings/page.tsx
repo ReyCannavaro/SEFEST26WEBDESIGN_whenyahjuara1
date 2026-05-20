@@ -151,8 +151,8 @@ function UploadDPModal({ booking, onClose, onSuccess }: {
   };
 
   return (
-    <div style={overlayStyle} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div style={modalStyle}>
+    <div className="bk-overlay" style={overlayStyle} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="bk-modal" style={modalStyle}>
         <div style={modalHeaderStyle}>
           <div>
             <h3 style={{ fontSize: 16, fontWeight: 800, color: '#111827', margin: 0 }}>Upload Bukti Transfer DP</h3>
@@ -263,7 +263,7 @@ function ReviewModal({ booking, onClose, onSuccess }: {
   const activeRating = hovered || rating;
 
   return (
-    <div style={overlayStyle} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="bk-overlay" style={overlayStyle} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div style={{ ...modalStyle, maxWidth: 460 }}>
         <div style={modalHeaderStyle}>
           <div>
@@ -274,7 +274,6 @@ function ReviewModal({ booking, onClose, onSuccess }: {
         </div>
 
         <div style={{ padding: '20px 24px' }}>
-          {/* Vendor info */}
           <div style={{
             background: '#F7F7F4', borderRadius: 10, padding: '12px 14px',
             marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12,
@@ -369,7 +368,7 @@ function ReviewModal({ booking, onClose, onSuccess }: {
 
 function DetailModal({ booking, onClose }: { booking: Booking; onClose: () => void }) {
   return (
-    <div style={overlayStyle} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="bk-overlay" style={overlayStyle} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div style={{ ...modalStyle, maxWidth: 500 }}>
         <div style={modalHeaderStyle}>
           <div>
@@ -382,7 +381,7 @@ function DetailModal({ booking, onClose }: { booking: Booking; onClose: () => vo
         <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
           <StatusBadge status={booking.status} />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="bk-modal-grid">
             {[
               { label: 'Nama Event', val: booking.event_name },
               { label: 'Layanan', val: booking.service.name },
@@ -465,6 +464,7 @@ function CancelConfirmedModal({
 
   return (
     <div
+      className="bk-overlay"
       style={{ position: 'fixed', inset: 0, zIndex: 500, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
@@ -522,7 +522,6 @@ function CancelConfirmedModal({
             </div>
           )}
 
-          {/* Actions */}
           <div style={{ display: 'flex', gap: 10 }}>
             <button onClick={onClose}
               style={{ flex: 1, padding: '12px 0', borderRadius: 10, background: '#f1f5f9', color: '#374151', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
@@ -706,7 +705,7 @@ function BookingCard({
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="bk-card-btns">
             {booking.status === 'pending' && (
               <button onClick={handleCancel} disabled={cancelling} style={{
                 ...btnDanger, flex: 1, opacity: cancelling ? 0.6 : 1,
@@ -836,14 +835,40 @@ export default function BookingsPage() {
         @keyframes spin    { to { transform: rotate(360deg); } }
         .tab-btn:hover { background: #F3F9F5 !important; color: #1C3D2E !important; }
         .page-btn:hover:not(:disabled) { background: #F3F9F5 !important; border-color: #C7DDD1 !important; }
+
+        .bk-header     { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 28px; padding-top: 12px; }
+        .bk-actions    { display: flex; gap: 8px; flex-shrink: 0; }
+        .bk-card-btns  { display: flex; gap: 8px; flex-wrap: wrap; }
+        .bk-modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        @media (max-width: 600px) {
+          .bk-header  { flex-direction: column; gap: 12px; }
+          .bk-actions { width: 100%; }
+          .bk-actions a, .bk-actions button { flex: 1; justify-content: center; }
+
+          .bk-card-btns > * { flex: 1 1 calc(50% - 4px); min-width: 0; }
+          .bk-card-btns > *:only-child { flex: 1 1 100%; }
+
+          .bk-modal-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 400px) {
+          .bk-card-btns > * { flex: 1 1 100%; }
+        }
+
+        /* Modal responsive */
+        @media (max-width: 540px) {
+          .bk-overlay  { padding: 12px !important; align-items: flex-end !important; }
+          .bk-modal    { border-radius: 20px 20px 0 0 !important; max-height: 92vh !important; }
+        }
       `}</style>
 
       <Navbar />
 
       <main style={{ minHeight: '100vh', background: '#F7F7F4', paddingTop: 100 }}>
-        <div style={{ maxWidth: 860, margin: '0 auto', padding: '0 20px 80px' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto', padding: '0 16px 80px' }}>
 
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, paddingTop: 12 }}>
+          <div className="bk-header">
             <div>
               <h1 style={{ fontSize: 26, fontWeight: 800, color: '#111827', margin: '0 0 5px', fontFamily: 'Fraunces, serif', letterSpacing: '-0.5px' }}>
                 Transaksi Saya
@@ -852,7 +877,7 @@ export default function BookingsPage() {
                 {loading ? 'Memuat...' : `${total} booking ditemukan`}
               </p>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="bk-actions">
               <button onClick={handleRefresh} disabled={loading} style={{
                 background: '#fff', border: '1px solid #EBEBEB',
                 borderRadius: 100, padding: '9px 16px',
@@ -878,6 +903,7 @@ export default function BookingsPage() {
             display: 'flex', gap: 6, overflowX: 'auto',
             paddingBottom: 2, marginBottom: 24,
             scrollbarWidth: 'none',
+            WebkitOverflowScrolling: 'touch',
           }}>
             {TABS.map(t => {
               const count = counts[t.key];
