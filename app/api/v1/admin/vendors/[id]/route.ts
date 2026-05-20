@@ -68,23 +68,30 @@ export async function GET(
 
     if (error || !vendor) return notFound("Vendor tidak ditemukan.");
 
+    const adminSupabaseForStorage = createAdminClient();
     let ktp_signed_url: string | null = null;
     let selfie_signed_url: string | null = null;
 
     if (vendor.ktp_url) {
-      const ktpPath = vendor.ktp_url.replace("vendor-docs/", "");
-      const { data } = await supabase.storage
+      // ktp_url disimpan sebagai "vendor-docs/user_id/ktp-xxx.jpg"
+      // strip prefix bucket agar hanya tersisa path di dalam bucket
+      const ktpPath = vendor.ktp_url.startsWith("vendor-docs/")
+        ? vendor.ktp_url.slice("vendor-docs/".length)
+        : vendor.ktp_url;
+      const { data: ktpSigned, error: ktpErr } = await adminSupabaseForStorage.storage
         .from("vendor-docs")
         .createSignedUrl(ktpPath, 900);
-      ktp_signed_url = data?.signedUrl ?? null;
+      if (!ktpErr) ktp_signed_url = ktpSigned?.signedUrl ?? null;
     }
 
     if (vendor.selfie_url) {
-      const selfiePath = vendor.selfie_url.replace("vendor-docs/", "");
-      const { data } = await supabase.storage
+      const selfiePath = vendor.selfie_url.startsWith("vendor-docs/")
+        ? vendor.selfie_url.slice("vendor-docs/".length)
+        : vendor.selfie_url;
+      const { data: selfieSigned, error: selfieErr } = await adminSupabaseForStorage.storage
         .from("vendor-docs")
         .createSignedUrl(selfiePath, 900);
-      selfie_signed_url = data?.signedUrl ?? null;
+      if (!selfieErr) selfie_signed_url = selfieSigned?.signedUrl ?? null;
     }
 
     const { ktp_url, selfie_url, ...safeVendor } = vendor;
@@ -141,7 +148,10 @@ export async function PATCH(
         })
         .eq("id", id);
 
-      if (vendorError) return serverError(vendorError.message);
+      if (vendorError) {
+        console.error("[admin/approve] vendor_profiles update error:", vendorError);
+        return serverError(`Gagal memperbarui status vendor: ${vendorError.message}`);
+      }
 
       const { error: userError } = await adminSupabase
         .from("user_profiles")
@@ -151,7 +161,10 @@ export async function PATCH(
         })
         .eq("id", vendor.user_id);
 
-      if (userError) return serverError(userError.message);
+      if (userError) {
+        console.error("[admin/approve] user_profiles update error:", userError);
+        return serverError(`Gagal memperbarui role user: ${userError.message}`);
+      }
 
       const isReapproval = vendor.is_verified && !vendor.is_active;
       return ok({
