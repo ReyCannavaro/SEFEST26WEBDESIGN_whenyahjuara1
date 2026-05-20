@@ -14,36 +14,27 @@ import {
 import type { BookingStatus } from '@/types';
 
 interface BookingItem {
-  id: string;
-  event_date: string;
-  event_name: string;
-  event_location: string;
-  setup_time: string | null;
-  notes: string | null;
-  status: BookingStatus;
-  rejection_reason: string | null;
-  dp_proof_url: string | null;
-  dp_verified_at: string | null;
-  clarification_message: string | null;
-  clarification_at: string | null;
-  completed_at: string | null;
-  created_at: string;
-  updated_at: string;
+  id: string; event_date: string; event_name: string; event_location: string;
+  setup_time: string | null; notes: string | null; status: BookingStatus;
+  rejection_reason: string | null; dp_proof_url: string | null;
+  dp_verified_at: string | null; clarification_message: string | null;
+  clarification_at: string | null; completed_at: string | null;
+  created_at: string; updated_at: string;
   service: { id: string; name: string; category: string } | null;
   user: { id: string; full_name: string | null; email: string; phone: string | null } | null;
 }
 
 const STATUS_CONFIG: Record<BookingStatus, { label: string; color: string; bg: string; border: string; icon: React.ReactNode }> = {
-  pending:         { label: 'Menunggu',          color: '#92400E', bg: '#FFFBEB', border: '#FDE68A', icon: <Clock size={12} /> },
-  confirmed:       { label: 'Dikonfirmasi',       color: '#1E40AF', bg: '#EFF6FF', border: '#BFDBFE', icon: <CheckCircle2 size={12} /> },
-  waiting_payment: { label: 'Menunggu DP',        color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE', icon: <AlertCircle size={12} /> },
-  dp_verified:     { label: 'DP Terverifikasi',   color: '#065F46', bg: '#ECFDF5', border: '#A7F3D0', icon: <ShieldCheck size={12} /> },
-  completed:       { label: 'Selesai',            color: '#064E3B', bg: '#D1FAE5', border: '#6EE7B7', icon: <CheckCheck size={12} /> },
-  rejected:        { label: 'Ditolak',            color: '#991B1B', bg: '#FFF1F2', border: '#FECDD3', icon: <XCircle size={12} /> },
-  cancelled:       { label: 'Dibatalkan',         color: '#374151', bg: '#F9FAFB', border: '#E5E7EB', icon: <Ban size={12} /> },
+  pending:         { label: 'Menunggu',        color: '#92400E', bg: '#FFFBEB', border: '#FDE68A', icon: <Clock size={12} /> },
+  confirmed:       { label: 'Dikonfirmasi',    color: '#1E40AF', bg: '#EFF6FF', border: '#BFDBFE', icon: <CheckCircle2 size={12} /> },
+  waiting_payment: { label: 'Menunggu DP',     color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE', icon: <AlertCircle size={12} /> },
+  dp_verified:     { label: 'DP Terverifikasi',color: '#065F46', bg: '#ECFDF5', border: '#A7F3D0', icon: <ShieldCheck size={12} /> },
+  completed:       { label: 'Selesai',         color: '#064E3B', bg: '#D1FAE5', border: '#6EE7B7', icon: <CheckCheck size={12} /> },
+  rejected:        { label: 'Ditolak',         color: '#991B1B', bg: '#FFF1F2', border: '#FECDD3', icon: <XCircle size={12} /> },
+  cancelled:       { label: 'Dibatalkan',      color: '#374151', bg: '#F9FAFB', border: '#E5E7EB', icon: <Ban size={12} /> },
 };
 
-const STATUS_TABS: { key: string; label: string }[] = [
+const STATUS_TABS = [
   { key: 'all',             label: 'Semua' },
   { key: 'pending',         label: 'Menunggu' },
   { key: 'confirmed',       label: 'Dikonfirmasi' },
@@ -61,12 +52,8 @@ const NAV_ITEMS = [
   { href: '/vendor/analytics',    icon: <BarChart2 size={18} />,       label: 'Statistik' },
 ];
 
-function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-}
-function fmtDateShort(d: string) {
-  return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-}
+function fmtDate(d: string) { return new Date(d).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmtDateShort(d: string) { return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }); }
 function timeAgo(d: string) {
   const diff = Date.now() - new Date(d).getTime();
   const mins = Math.floor(diff / 60000);
@@ -94,7 +81,7 @@ function StatusBadge({ status }: { status: BookingStatus }) {
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3500); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, left: '50%', transform: 'translateX(-50%)', zIndex: 100, background: type === 'success' ? '#064E3B' : '#991B1B', color: 'white', borderRadius: 14, padding: '13px 22px', fontSize: 14, fontWeight: 600, boxShadow: '0 8px 32px rgba(0,0,0,0.22)', display: 'flex', alignItems: 'center', gap: 10, maxWidth: 420, animation: 'slideUp 0.3s ease' }}>
+    <div className="toast-bar" style={{ background: type === 'success' ? '#064E3B' : '#991B1B' }}>
       {type === 'success' ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
       {msg}
       <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', padding: 0, display: 'flex', marginLeft: 4 }}><X size={14} /></button>
@@ -102,9 +89,7 @@ function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error';
   );
 }
 
-function RejectModal({ booking, onClose, onDone }: {
-  booking: BookingItem; onClose: () => void; onDone: (id: string) => void;
-}) {
+function RejectModal({ booking, onClose, onDone }: { booking: BookingItem; onClose: () => void; onDone: (id: string) => void }) {
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
   const PRESETS = ['Tanggal tidak tersedia', 'Peralatan sedang dalam perawatan', 'Kapasitas tidak mencukupi', 'Di luar jangkauan area layanan', 'Budget tidak sesuai'];
@@ -113,30 +98,26 @@ function RejectModal({ booking, onClose, onDone }: {
     if (!reason.trim()) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/v1/bookings/${booking.id}/reject`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason }),
-      });
+      const res = await fetch(`/api/v1/bookings/${booking.id}/reject`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
       const data = await res.json();
       if (data.success) { onDone(booking.id); onClose(); }
     } finally { setLoading(false); }
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
-      <div style={{ background: 'white', borderRadius: 20, padding: '28px 28px', maxWidth: 480, width: '100%', boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }} onClick={e => e.stopPropagation()}>
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-box" onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 20 }}>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Ban size={18} color="#DC2626" />
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>Tolak Booking</h3>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
               Booking dari <strong>{booking.user?.full_name ?? 'klien'}</strong> untuk <strong>{booking.event_name}</strong> akan ditolak.
             </p>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex', marginLeft: 'auto' }}><X size={18} /></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex', flexShrink: 0 }}><X size={18} /></button>
         </div>
 
         <div style={{ marginBottom: 14 }}>
@@ -161,8 +142,158 @@ function RejectModal({ booking, onClose, onDone }: {
           <button onClick={onClose} style={{ flex: 1, padding: '11px', borderRadius: 12, border: '1.5px solid var(--gray-200)', background: 'white', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>Batal</button>
           <button onClick={handleReject} disabled={!reason.trim() || loading}
             style={{ flex: 1, padding: '11px', borderRadius: 12, border: 'none', background: reason.trim() && !loading ? '#DC2626' : '#e5e7eb', color: reason.trim() && !loading ? 'white' : 'var(--text-muted)', fontSize: 14, fontWeight: 700, cursor: reason.trim() && !loading ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {loading ? <><span style={{ width: 14, height: 14, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> Menolak...</> : 'Tolak Booking'}
+            {loading ? <><span className="btn-spinner" /> Menolak...</> : 'Tolak Booking'}
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DpProofViewer({ bookingId }: { bookingId: string }) {
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetch(`/api/v1/bookings/${bookingId}`).then(r => r.json()).then(d => { if (d.success) setSignedUrl(d.data?.dp_proof_signed_url ?? null); }).catch(() => {}).finally(() => setLoading(false));
+  }, [bookingId]);
+  if (loading) return <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 16px', borderRadius: 10, background: '#ede9fe', color: '#7c3aed', fontSize: 13, fontWeight: 600 }}><span className="btn-spinner" style={{ borderColor: '#c4b5fd', borderTopColor: '#7c3aed' }} />Memuat bukti DP...</div>;
+  if (!signedUrl) return <div style={{ fontSize: 13, color: '#6d28d9', display: 'flex', alignItems: 'center', gap: 6 }}><AlertCircle size={13} /> Gagal memuat bukti DP.</div>;
+  return <a href={signedUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 16px', borderRadius: 10, background: '#7c3aed', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}><FileImage size={14} /> Lihat Bukti DP</a>;
+}
+
+function Row({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 7 }}>
+      <span style={{ marginTop: 1, flexShrink: 0 }}>{icon}</span>
+      <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 70, flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500, flex: 1 }}>{value}</span>
+    </div>
+  );
+}
+
+function ActionButtons({ booking, onAction, actionLoading }: {
+  booking: BookingItem;
+  onAction: (type: 'confirm' | 'reject' | 'verify_dp' | 'clarify' | 'complete', booking: BookingItem) => void;
+  actionLoading: string | null;
+}) {
+  const isLoading = (type: string) => actionLoading === `${booking.id}-${type}`;
+  const BtnSpinner = () => <span className="btn-spinner" />;
+
+  if (booking.status === 'pending') return (
+    <div style={{ display: 'flex', gap: 10 }}>
+      <button onClick={() => onAction('reject', booking)} disabled={!!actionLoading}
+        style={{ flex: 1, padding: '12px', borderRadius: 12, border: '1.5px solid #fecdd3', background: 'white', color: '#DC2626', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+        <Ban size={14} /> Tolak
+      </button>
+      <button onClick={() => onAction('confirm', booking)} disabled={!!actionLoading}
+        style={{ flex: 2, padding: '12px', borderRadius: 12, border: 'none', background: 'var(--forest)', color: 'white', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+        {isLoading('confirm') ? <BtnSpinner /> : <CheckCircle2 size={14} />}
+        {isLoading('confirm') ? 'Mengkonfirmasi...' : 'Konfirmasi Booking'}
+      </button>
+    </div>
+  );
+
+  if (booking.status === 'waiting_payment') return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {!booking.dp_proof_url && (
+        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: '#92400e', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <AlertCircle size={14} /> Klien belum mengupload bukti DP
+        </div>
+      )}
+      {booking.dp_proof_url && (
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={() => onAction('verify_dp', booking)} disabled={!!actionLoading}
+            style={{ flex: 2, padding: '12px', borderRadius: 12, border: 'none', background: '#7c3aed', color: 'white', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+            {isLoading('verify_dp') ? <BtnSpinner /> : <ShieldCheck size={14} />}
+            {isLoading('verify_dp') ? 'Memverifikasi...' : 'Verifikasi DP'}
+          </button>
+          <button onClick={() => onAction('clarify', booking)} disabled={!!actionLoading}
+            style={{ flex: 1, padding: '12px', borderRadius: 12, border: '1.5px solid #fed7aa', background: '#fff7ed', color: '#ea580c', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <TriangleAlert size={14} /> Klarifikasi
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  if (booking.status === 'dp_verified') return (
+    <button onClick={() => onAction('complete', booking)} disabled={!!actionLoading}
+      style={{ width: '100%', padding: '12px', borderRadius: 12, border: 'none', background: '#16a34a', color: 'white', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+      {isLoading('complete') ? <BtnSpinner /> : <CheckCheck size={14} />}
+      {isLoading('complete') ? 'Memproses...' : 'Tandai Event Selesai'}
+    </button>
+  );
+
+  return null;
+}
+
+function ClarifyModal({ booking, onClose, onDone }: { booking: BookingItem; onClose: () => void; onDone: (updated: BookingItem) => void }) {
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState('');
+  const userPhone = booking.user?.phone?.replace(/\D/g, '') ?? null;
+  const userName  = booking.user?.full_name ?? 'User';
+
+  const handleSubmit = async () => {
+    if (!message.trim()) { setError('Pesan klarifikasi wajib diisi.'); return; }
+    setLoading(true); setError('');
+    try {
+      const res = await fetch(`/api/v1/bookings/${booking.id}/verify-payment`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'clarify', message: message.trim() }) });
+      const data = await res.json();
+      if (data.success) {
+        onDone({ ...booking, clarification_message: data.data.clarification_message, clarification_at: data.data.booking.clarification_at, updated_at: data.data.booking.updated_at });
+        if (data.data.wa_link) window.open(data.data.wa_link, '_blank');
+        onClose();
+      } else setError(data.error ?? 'Terjadi kesalahan.');
+    } catch { setError('Tidak dapat terhubung ke server.'); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div className="modal-backdrop" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal-box" onClick={e => e.stopPropagation()}>
+        <div style={{ padding: '20px 24px 16px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, margin: '-28px -28px 20px' }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+            <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#fff7ed', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+              <TriangleAlert size={19} color="#ea580c" />
+            </div>
+            <div>
+              <p style={{ fontSize: 17, fontWeight: 800, color: '#0f172a', marginBottom: 2 }}>Minta Klarifikasi Bukti DP</p>
+              <p style={{ fontSize: 12.5, color: '#64748b' }}>{booking.event_name} · {userName}</p>
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'grid', placeItems: 'center', cursor: 'pointer', flexShrink: 0 }}><X size={16} color="#374151" /></button>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ padding: '12px 14px', background: '#fff7ed', borderRadius: 12, border: '1px solid #fed7aa', fontSize: 13, color: '#9a3412', lineHeight: 1.6 }}>
+            <strong>Status booking TIDAK berubah</strong> — akan tetap <em>Menunggu DP</em>. User akan diminta upload ulang bukti yang valid.
+          </div>
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 700, color: '#374151', display: 'block', marginBottom: 7 }}>Pesan untuk User <span style={{ color: '#ef4444' }}>*</span></label>
+            <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Contoh: Bukti transfer tidak terbaca, jumlah tidak sesuai..." maxLength={500} rows={4}
+              style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: `1.5px solid ${error ? '#fca5a5' : '#e5e7eb'}`, fontSize: 13.5, fontFamily: 'inherit', color: '#0f172a', background: '#fafafa', outline: 'none', resize: 'vertical', lineHeight: 1.6, boxSizing: 'border-box' }} />
+            <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 4, textAlign: 'right' }}>{message.length}/500</p>
+          </div>
+          {userPhone ? (
+            <div style={{ padding: '11px 14px', background: '#f0fdf4', borderRadius: 12, border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <MessageSquare size={16} color="#16a34a" style={{ flexShrink: 0 }} />
+              <p style={{ fontSize: 12.5, color: '#15803d' }}>WhatsApp ke <strong>{userName}</strong> akan otomatis terbuka dengan pesan pre-filled.</p>
+            </div>
+          ) : (
+            <div style={{ padding: '11px 14px', background: '#f8fafc', borderRadius: 12, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <AlertCircle size={15} color="#94a3b8" style={{ flexShrink: 0 }} />
+              <p style={{ fontSize: 12.5, color: '#64748b' }}>User tidak punya nomor HP. Hubungi via email: <strong>{booking.user?.email}</strong></p>
+            </div>
+          )}
+          {error && <div style={{ padding: '10px 14px', background: '#fef2f2', borderRadius: 10, border: '1px solid #fecaca', fontSize: 13, color: '#dc2626', display: 'flex', gap: 8, alignItems: 'center' }}><AlertCircle size={14} /> {error}</div>}
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button onClick={onClose} style={{ flex: 1, padding: '12px 0', borderRadius: 10, background: '#f1f5f9', color: '#374151', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>Batal</button>
+            <button onClick={handleSubmit} disabled={loading || !message.trim()}
+              style={{ flex: 2, padding: '12px 0', borderRadius: 10, background: loading || !message.trim() ? '#9ca3af' : '#ea580c', color: 'white', fontSize: 14, fontWeight: 700, border: 'none', cursor: loading || !message.trim() ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, fontFamily: 'inherit' }}>
+              {loading ? <><Loader2 size={14} style={{ animation: 'spin 0.7s linear infinite' }} /> Mengirim...</> : <><Send size={14} /> Kirim Klarifikasi{userPhone ? ' & WA' : ''}</>}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -179,21 +310,19 @@ function BookingDrawer({ booking, onClose, onAction, actionLoading }: {
     : null;
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex' }} onClick={onClose}>
-      <div style={{ flex: 1 }} />
-      <div
-        style={{ width: '100%', maxWidth: 480, background: 'white', height: '100%', overflowY: 'auto', boxShadow: '-8px 0 48px rgba(0,0,0,0.15)', animation: 'slideRight 0.3s cubic-bezier(0.22,1,0.36,1)' }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div style={{ position: 'sticky', top: 0, background: 'white', borderBottom: '1px solid var(--gray-100)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, zIndex: 2 }}>
+    <div className="drawer-backdrop" onClick={onClose}>
+      <div className="drawer-panel" onClick={e => e.stopPropagation()}>
+        <div className="drawer-handle-wrap">
+          <div className="drawer-handle" />
+        </div>
+
+        <div style={{ position: 'sticky', top: 0, background: 'white', borderBottom: '1px solid var(--gray-100)', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12, zIndex: 2 }}>
           <button onClick={onClose} style={{ background: 'var(--gray-100)', border: 'none', borderRadius: 8, padding: 7, cursor: 'pointer', display: 'flex', color: 'var(--text-secondary)' }}><X size={16} /></button>
           <div>
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>Detail Booking</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'monospace' }}>#{booking.id.slice(0, 8).toUpperCase()}</div>
           </div>
-          <div style={{ marginLeft: 'auto' }}>
-            <StatusBadge status={booking.status} />
-          </div>
+          <div style={{ marginLeft: 'auto' }}><StatusBadge status={booking.status} /></div>
         </div>
 
         <div style={{ padding: '20px' }}>
@@ -226,11 +355,7 @@ function BookingDrawer({ booking, onClose, onAction, actionLoading }: {
                   <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{booking.user.email}</div>
                 </div>
               </div>
-              {booking.user.phone && (
-                <div style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-                  <Phone size={12} /> {booking.user.phone}
-                </div>
-              )}
+              {booking.user.phone && <div style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}><Phone size={12} /> {booking.user.phone}</div>}
               {whatsappUrl && (
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 16px', borderRadius: 10, background: '#dcfce7', color: '#16a34a', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
@@ -243,24 +368,16 @@ function BookingDrawer({ booking, onClose, onAction, actionLoading }: {
           {booking.dp_proof_url && (
             <div style={{ background: '#f5f3ff', borderRadius: 14, padding: '14px 18px', marginBottom: 16, border: '1px solid #ddd6fe' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#7c3aed', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>Bukti DP Pembayaran</div>
-              {/* Buka detail booking via API yang sudah generate signed URL */}
               <DpProofViewer bookingId={booking.id} />
-              {booking.dp_verified_at && (
-                <div style={{ fontSize: 12, color: '#6d28d9', marginTop: 8 }}>✓ Diverifikasi pada {fmtDateShort(booking.dp_verified_at)}</div>
-              )}
+              {booking.dp_verified_at && <div style={{ fontSize: 12, color: '#6d28d9', marginTop: 8 }}>✓ Diverifikasi pada {fmtDateShort(booking.dp_verified_at)}</div>}
             </div>
           )}
+
           {booking.clarification_message && booking.status === 'waiting_payment' && (
-            <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 10, padding: '10px 14px', marginTop: 8 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#ea580c', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5, display: 'flex', alignItems: 'center', gap: 5 }}>
-                <TriangleAlert size={11} /> Klarifikasi Dikirim
-              </div>
+            <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#ea580c', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5, display: 'flex', alignItems: 'center', gap: 5 }}><TriangleAlert size={11} /> Klarifikasi Dikirim</div>
               <div style={{ fontSize: 13, color: '#9a3412', lineHeight: 1.5 }}>{booking.clarification_message}</div>
-              {booking.clarification_at && (
-                <div style={{ fontSize: 11, color: '#c2410c', marginTop: 4 }}>
-                  {fmtDateShort(booking.clarification_at)}
-                </div>
-              )}
+              {booking.clarification_at && <div style={{ fontSize: 11, color: '#c2410c', marginTop: 4 }}>{fmtDateShort(booking.clarification_at)}</div>}
             </div>
           )}
 
@@ -273,11 +390,11 @@ function BookingDrawer({ booking, onClose, onAction, actionLoading }: {
 
           <div style={{ background: 'var(--gray-50)', borderRadius: 14, padding: '14px 18px', marginBottom: 20 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>Timeline</div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-              <div style={{ marginBottom: 5 }}>📤 Dibuat: {timeAgo(booking.created_at)}</div>
-              <div style={{ marginBottom: 5 }}>🔄 Diupdate: {timeAgo(booking.updated_at)}</div>
-              {booking.dp_verified_at && <div style={{ marginBottom: 5 }}>✅ DP Verified: {fmtDateShort(booking.dp_verified_at)}</div>}
-              {booking.completed_at && <div>🎉 Selesai: {fmtDateShort(booking.completed_at)}</div>}
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: 5 }}>
+              <div>Dibuat: {timeAgo(booking.created_at)}</div>
+              <div>Diupdate: {timeAgo(booking.updated_at)}</div>
+              {booking.dp_verified_at && <div>DP Verified: {fmtDateShort(booking.dp_verified_at)}</div>}
+              {booking.completed_at && <div>Selesai: {fmtDateShort(booking.completed_at)}</div>}
             </div>
           </div>
 
@@ -288,250 +405,17 @@ function BookingDrawer({ booking, onClose, onAction, actionLoading }: {
   );
 }
 
-function DpProofViewer({ bookingId }: { bookingId: string }) {
-  const [signedUrl, setSignedUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`/api/v1/bookings/${bookingId}`)
-      .then(r => r.json())
-      .then(d => {
-        if (d.success) setSignedUrl(d.data?.dp_proof_signed_url ?? null);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [bookingId]);
-
-  if (loading) {
-    return (
-      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 16px', borderRadius: 10, background: '#ede9fe', color: '#7c3aed', fontSize: 13, fontWeight: 600 }}>
-        <span style={{ width: 12, height: 12, border: '2px solid #c4b5fd', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} />
-        Memuat bukti DP...
-      </div>
-    );
-  }
-
-  if (!signedUrl) {
-    return (
-      <div style={{ fontSize: 13, color: '#6d28d9', display: 'flex', alignItems: 'center', gap: 6 }}>
-        <AlertCircle size={13} /> Gagal memuat bukti DP. Coba refresh halaman.
-      </div>
-    );
-  }
-
-  return (
-    <a
-      href={signedUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 16px', borderRadius: 10, background: '#7c3aed', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}
-    >
-      <FileImage size={14} /> Lihat Bukti DP
-    </a>
-  );
-}
-
-function Row({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 7 }}>
-      <span style={{ marginTop: 1, flexShrink: 0 }}>{icon}</span>
-      <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 70, flexShrink: 0 }}>{label}</span>
-      <span style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500, flex: 1 }}>{value}</span>
-    </div>
-  );
-}
-
-function ClarifyModal({ booking, onClose, onDone }: {
-  booking: BookingItem;
-  onClose: () => void;
-  onDone: (updated: BookingItem) => void;
-}) {
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState('');
-
-  const userPhone = booking.user?.phone?.replace(/\D/g, '') ?? null;
-  const userName  = booking.user?.full_name ?? 'User';
-
-  const handleSubmit = async () => {
-    if (!message.trim()) { setError('Pesan klarifikasi wajib diisi.'); return; }
-    setLoading(true); setError('');
-    try {
-      const res = await fetch(`/api/v1/bookings/${booking.id}/verify-payment`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'clarify', message: message.trim() }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        onDone({
-          ...booking,
-          clarification_message: data.data.clarification_message,
-          clarification_at: data.data.booking.clarification_at,
-          updated_at: data.data.booking.updated_at,
-        });
-        if (data.data.wa_link) window.open(data.data.wa_link, '_blank');
-        onClose();
-      } else {
-        setError(data.error ?? 'Terjadi kesalahan.');
-      }
-    } catch { setError('Tidak dapat terhubung ke server.'); }
-    finally { setLoading(false); }
-  };
-
-  return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 500, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 480, boxShadow: '0 24px 80px rgba(0,0,0,0.25)', overflow: 'hidden' }}>
-        {/* Header */}
-        <div style={{ padding: '20px 24px 16px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-            <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#fff7ed', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-              <TriangleAlert size={19} color="#ea580c" />
-            </div>
-            <div>
-              <p style={{ fontSize: 17, fontWeight: 800, color: '#0f172a', marginBottom: 2 }}>Minta Klarifikasi Bukti DP</p>
-              <p style={{ fontSize: 12.5, color: '#64748b' }}>{booking.event_name} · {booking.user?.full_name ?? 'User'}</p>
-            </div>
-          </div>
-          <button onClick={onClose} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'grid', placeItems: 'center', cursor: 'pointer', flexShrink: 0 }}>
-            <X size={16} color="#374151" />
-          </button>
-        </div>
-
-        <div style={{ padding: '20px 24px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {/* Info */}
-          <div style={{ padding: '12px 14px', background: '#fff7ed', borderRadius: 12, border: '1px solid #fed7aa', fontSize: 13, color: '#9a3412', lineHeight: 1.6 }}>
-            <strong>Status booking TIDAK berubah</strong> — akan tetap <em>Menunggu DP</em>. User akan mendapat pesan ini dan diminta upload ulang bukti yang valid.
-          </div>
-
-          <div>
-            <label style={{ fontSize: 13, fontWeight: 700, color: '#374151', display: 'block', marginBottom: 7 }}>
-              Pesan untuk User <span style={{ color: '#ef4444' }}>*</span>
-            </label>
-            <textarea
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              placeholder={`Contoh: Bukti transfer tidak terbaca, jumlah tidak sesuai, atau mohon upload foto yang lebih jelas.`}
-              maxLength={500}
-              rows={4}
-              style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: `1.5px solid ${error ? '#fca5a5' : '#e5e7eb'}`, fontSize: 13.5, fontFamily: 'inherit', color: '#0f172a', background: '#fafafa', outline: 'none', resize: 'vertical', lineHeight: 1.6, boxSizing: 'border-box', transition: 'border-color 0.18s' }}
-              onFocus={e => { e.currentTarget.style.borderColor = '#ea580c'; }}
-              onBlur={e => { e.currentTarget.style.borderColor = error ? '#fca5a5' : '#e5e7eb'; }}
-            />
-            <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 4, textAlign: 'right' }}>{message.length}/500</p>
-          </div>
-
-          {userPhone ? (
-            <div style={{ padding: '11px 14px', background: '#f0fdf4', borderRadius: 12, border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <MessageSquare size={16} color="#16a34a" style={{ flexShrink: 0 }} />
-              <p style={{ fontSize: 12.5, color: '#15803d' }}>
-                Setelah kirim, WhatsApp ke <strong>{userName}</strong> akan otomatis terbuka dengan pesan pre-filled.
-              </p>
-            </div>
-          ) : (
-            <div style={{ padding: '11px 14px', background: '#f8fafc', borderRadius: 12, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <AlertCircle size={15} color="#94a3b8" style={{ flexShrink: 0 }} />
-              <p style={{ fontSize: 12.5, color: '#64748b' }}>
-                User tidak punya nomor HP. Hubungi via email: <strong>{booking.user?.email}</strong>
-              </p>
-            </div>
-          )}
-
-          {error && (
-            <div style={{ padding: '10px 14px', background: '#fef2f2', borderRadius: 10, border: '1px solid #fecaca', fontSize: 13, color: '#dc2626', display: 'flex', gap: 8, alignItems: 'center' }}>
-              <AlertCircle size={14} /> {error}
-            </div>
-          )}
-
-          {/* Actions */}
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={onClose}
-              style={{ flex: 1, padding: '12px 0', borderRadius: 10, background: '#f1f5f9', color: '#374151', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
-              Batal
-            </button>
-            <button onClick={handleSubmit} disabled={loading || !message.trim()}
-              style={{ flex: 2, padding: '12px 0', borderRadius: 10, background: loading || !message.trim() ? '#9ca3af' : '#ea580c', color: 'white', fontSize: 14, fontWeight: 700, border: 'none', cursor: loading || !message.trim() ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, fontFamily: 'inherit', transition: 'background 0.2s' }}>
-              {loading
-                ? <><Loader2 size={14} style={{ animation: 'spin 0.7s linear infinite' }} /> Mengirim...</>
-                : <><Send size={14} /> Kirim Klarifikasi{userPhone ? ' & Buka WA' : ''}</>}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ActionButtons({ booking, onAction, actionLoading }: {
-  booking: BookingItem;
-  onAction: (type: 'confirm' | 'reject' | 'verify_dp' | 'clarify' | 'complete', booking: BookingItem) => void;
-  actionLoading: string | null;
-}) {
-  const isLoading = (type: string) => actionLoading === `${booking.id}-${type}`;
-
-  const BtnLoader = () => <span style={{ width: 14, height: 14, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} />;
-
-  if (booking.status === 'pending') return (
-    <div style={{ display: 'flex', gap: 10 }}>
-      <button onClick={() => onAction('reject', booking)} disabled={!!actionLoading}
-        style={{ flex: 1, padding: '12px', borderRadius: 12, border: '1.5px solid #fecdd3', background: 'white', color: '#DC2626', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
-        <Ban size={14} /> Tolak
-      </button>
-      <button onClick={() => onAction('confirm', booking)} disabled={!!actionLoading}
-        style={{ flex: 2, padding: '12px', borderRadius: 12, border: 'none', background: 'var(--forest)', color: 'white', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
-        {isLoading('confirm') ? <BtnLoader /> : <CheckCircle2 size={14} />}
-        {isLoading('confirm') ? 'Mengkonfirmasi...' : 'Konfirmasi Booking'}
-      </button>
-    </div>
-  );
-
-  if (booking.status === 'waiting_payment') return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {!booking.dp_proof_url && (
-        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: '#92400e', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <AlertCircle size={14} /> Klien belum mengupload bukti DP
-        </div>
-      )}
-      {booking.dp_proof_url && (
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={() => onAction('verify_dp', booking)} disabled={!!actionLoading}
-            style={{ flex: 2, padding: '12px', borderRadius: 12, border: 'none', background: '#7c3aed', color: 'white', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
-            {isLoading('verify_dp') ? <BtnLoader /> : <ShieldCheck size={14} />}
-            {isLoading('verify_dp') ? 'Memverifikasi...' : 'Verifikasi DP'}
-          </button>
-          <button onClick={() => onAction('clarify', booking)} disabled={!!actionLoading}
-            style={{ flex: 1, padding: '12px', borderRadius: 12, border: '1.5px solid #fed7aa', background: '#fff7ed', color: '#ea580c', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            <TriangleAlert size={14} /> Klarifikasi
-          </button>
-        </div>
-      )}
-    </div>
-  );
-
-  if (booking.status === 'dp_verified') return (
-    <button onClick={() => onAction('complete', booking)} disabled={!!actionLoading}
-      style={{ width: '100%', padding: '12px', borderRadius: 12, border: 'none', background: '#16a34a', color: 'white', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
-      {isLoading('complete') ? <BtnLoader /> : <CheckCheck size={14} />}
-      {isLoading('complete') ? 'Memproses...' : 'Tandai Event Selesai'}
-    </button>
-  );
-
-  return null;
-}
-
 function Sidebar({ sidebarOpen, setSidebarOpen, storeName, onLogout }: {
-  sidebarOpen: boolean; setSidebarOpen: (v: boolean) => void;
-  storeName: string; onLogout: () => void;
+  sidebarOpen: boolean; setSidebarOpen: (v: boolean) => void; storeName: string; onLogout: () => void;
 }) {
   return (
     <>
       {sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 30, backdropFilter: 'blur(2px)' }} />}
-      <aside style={{ position: 'fixed', top: 0, left: 0, height: '100vh', width: 240, background: 'var(--forest)', display: 'flex', flexDirection: 'column', zIndex: 40, transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1)', transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)' }} className="vendor-sidebar">
+      <aside className="vendor-sidebar" style={{ background: 'var(--forest)' }}>
         <div style={{ padding: '24px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <Link href="/"><img src="/logo_findor.jpg" alt="Findor" style={{ height: 30, objectFit: 'contain', borderRadius: 6 }} /></Link>
-            <button onClick={() => setSidebarOpen(false)} style={{ background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: 8, padding: 6, cursor: 'pointer', color: 'rgba(255,255,255,0.6)', display: 'flex' }}><X size={16} /></button>
+            <button onClick={() => setSidebarOpen(false)} className="sidebar-close-btn"><X size={16} /></button>
           </div>
           <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>VENDOR PORTAL</div>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{storeName}</div>
@@ -553,27 +437,26 @@ function Sidebar({ sidebarOpen, setSidebarOpen, storeName, onLogout }: {
           </button>
         </div>
       </aside>
-      <style>{`@media(min-width:1024px){.vendor-sidebar{transform:translateX(0)!important}.vendor-main{margin-left:240px!important}}`}</style>
     </>
   );
 }
 
 export default function VendorBookingsPage() {
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [storeName, setStoreName] = useState('');
-  const [bookings, setBookings] = useState<BookingItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [sidebarOpen, setSidebarOpen]     = useState(false);
+  const [storeName, setStoreName]         = useState('');
+  const [bookings, setBookings]           = useState<BookingItem[]>([]);
+  const [loading, setLoading]             = useState(true);
+  const [activeTab, setActiveTab]         = useState('all');
+  const [search, setSearch]               = useState('');
+  const [page, setPage]                   = useState(1);
+  const [totalPages, setTotalPages]       = useState(1);
+  const [total, setTotal]                 = useState(0);
   const [selectedBooking, setSelectedBooking] = useState<BookingItem | null>(null);
-  const [rejectTarget, setRejectTarget] = useState<BookingItem | null>(null);
+  const [rejectTarget, setRejectTarget]   = useState<BookingItem | null>(null);
   const [clarifyTarget, setClarifyTarget] = useState<BookingItem | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+  const [toast, setToast]                 = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => setToast({ msg, type });
 
@@ -600,39 +483,23 @@ export default function VendorBookingsPage() {
     loadBookings('all', 1);
   }, [loadBookings, router]);
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab); setPage(1); loadBookings(tab, 1);
-  };
+  const handleTabChange = (tab: string) => { setActiveTab(tab); setPage(1); loadBookings(tab, 1); };
 
   const handleAction = async (type: 'confirm' | 'reject' | 'verify_dp' | 'clarify' | 'complete', booking: BookingItem) => {
     if (type === 'reject') { setRejectTarget(booking); return; }
     if (type === 'clarify') { setClarifyTarget(booking); return; }
-
-    const endpointMap = { confirm: 'confirm', verify_dp: 'verify-payment', complete: 'complete' };
-    const endpoint = endpointMap[type];
+    const endpointMap = { confirm: 'confirm', verify_dp: 'verify-payment', complete: 'complete' } as Record<string, string>;
     const key = `${booking.id}-${type}`;
     setActionLoading(key);
-
     try {
       const body = type === 'verify_dp' ? JSON.stringify({ action: 'verify' }) : undefined;
-      const res = await fetch(`/api/v1/bookings/${booking.id}/${endpoint}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        ...(body ? { body } : {}),
-      });
+      const res = await fetch(`/api/v1/bookings/${booking.id}/${endpointMap[type]}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, ...(body ? { body } : {}) });
       const data = await res.json();
-
       if (data.success) {
         showToast(data.data?.message ?? 'Berhasil!', 'success');
-        setBookings(prev => prev.map(b =>
-          b.id === booking.id ? { ...b, status: data.data.booking.status, dp_verified_at: data.data.booking.dp_verified_at ?? b.dp_verified_at, completed_at: data.data.booking.completed_at ?? b.completed_at } : b
-        ));
-        if (selectedBooking?.id === booking.id) {
-          setSelectedBooking(prev => prev ? { ...prev, status: data.data.booking.status } : null);
-        }
-      } else {
-        showToast(data.error ?? 'Gagal memproses aksi.', 'error');
-      }
+        setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: data.data.booking.status, dp_verified_at: data.data.booking.dp_verified_at ?? b.dp_verified_at, completed_at: data.data.booking.completed_at ?? b.completed_at } : b));
+        if (selectedBooking?.id === booking.id) setSelectedBooking(prev => prev ? { ...prev, status: data.data.booking.status } : null);
+      } else showToast(data.error ?? 'Gagal memproses aksi.', 'error');
     } finally { setActionLoading(null); }
   };
 
@@ -642,69 +509,39 @@ export default function VendorBookingsPage() {
     showToast('Booking berhasil ditolak.', 'success');
   };
 
-  const handleLogout = async () => {
-    await fetch('/api/v1/auth/logout', { method: 'POST' });
-    router.replace('/login');
-  };
+  const handleLogout = async () => { await fetch('/api/v1/auth/logout', { method: 'POST' }); router.replace('/login'); };
 
-  const filtered = bookings.filter(b =>
-    !search || b.event_name.toLowerCase().includes(search.toLowerCase()) ||
-    (b.user?.full_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
-    (b.user?.email ?? '').toLowerCase().includes(search.toLowerCase())
-  );
-
+  const filtered = bookings.filter(b => !search || b.event_name.toLowerCase().includes(search.toLowerCase()) || (b.user?.full_name ?? '').toLowerCase().includes(search.toLowerCase()) || (b.user?.email ?? '').toLowerCase().includes(search.toLowerCase()));
   const pendingCount = bookings.filter(b => b.status === 'pending').length;
-  const handlePrevPage = () => {
-    if (page <= 1 || loading) return;
-    const newPage = page - 1;
-    setPage(newPage);
-    loadBookings(activeTab, newPage);
-  };
-
-  const handleNextPage = () => {
-    if (page >= totalPages || loading) return;
-    const newPage = page + 1;
-    setPage(newPage);
-    loadBookings(activeTab, newPage);
-  };
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--gray-50)', fontFamily: 'Inter, sans-serif' }}>
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} storeName={storeName} onLogout={handleLogout} />
 
-      <div className="vendor-main" style={{ marginLeft: 0, minHeight: '100vh' }}>
-        <header style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(249,249,247,0.92)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--gray-100)', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => setSidebarOpen(true)} style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: 10, padding: 9, cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', boxShadow: 'var(--shadow-sm)', flexShrink: 0 }}>
-            <Menu size={18} />
-          </button>
-          <div>
-            <h1 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+      <div className="vendor-main">
+        <header className="bookings-header">
+          <button onClick={() => setSidebarOpen(true)} className="header-menu-btn"><Menu size={18} /></button>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h1 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2, display: 'flex', alignItems: 'center', gap: 8 }}>
               Booking Masuk
-              {pendingCount > 0 && (
-                <span style={{ marginLeft: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: '#ef4444', color: 'white', fontSize: 11, fontWeight: 700 }}>
-                  {pendingCount}
-                </span>
-              )}
+              {pendingCount > 0 && <span className="pending-badge">{pendingCount}</span>}
             </h1>
             <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{total} total booking</p>
           </div>
-          <button onClick={() => loadBookings(activeTab, page)} title="Refresh"
-            style={{ marginLeft: 'auto', background: 'white', border: '1px solid var(--gray-200)', borderRadius: 10, padding: 9, cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', boxShadow: 'var(--shadow-sm)' }}>
+          <button onClick={() => loadBookings(activeTab, page)} title="Refresh" className="header-refresh-btn">
             <RefreshCw size={16} className={loading ? 'spin-icon' : ''} />
           </button>
         </header>
 
-        <main style={{ padding: '24px 24px 60px', maxWidth: 1000, margin: '0 auto' }}>
-
-          {/* Search */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'white', borderRadius: 14, padding: '10px 16px', border: '1px solid var(--gray-100)', boxShadow: 'var(--shadow-sm)', marginBottom: 20 }}>
+        <main className="bookings-main">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'white', borderRadius: 14, padding: '10px 16px', border: '1px solid var(--gray-100)', boxShadow: 'var(--shadow-sm)', marginBottom: 16 }}>
             <Search size={15} color="var(--text-muted)" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari nama event atau klien..."
               style={{ flex: 1, border: 'none', outline: 'none', fontSize: 14, color: 'var(--text-primary)', background: 'transparent', fontFamily: 'inherit' }} />
             {search && <button onClick={() => setSearch('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'var(--text-muted)' }}><X size={14} /></button>}
           </div>
 
-          <div style={{ display: 'flex', gap: 6, marginBottom: 20, overflowX: 'auto', paddingBottom: 4 }}>
+          <div style={{ display: 'flex', gap: 6, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
             {STATUS_TABS.map(tab => {
               const isActive = activeTab === tab.key;
               const cnt = tab.key === 'all' ? total : bookings.filter(b => b.status === tab.key).length;
@@ -721,12 +558,9 @@ export default function VendorBookingsPage() {
 
           {loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} style={{ background: 'white', borderRadius: 14, padding: '18px 20px', border: '1px solid var(--gray-100)', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-                    <Skeleton w="45%" h={15} />
-                    <Skeleton w={80} h={24} r={12} />
-                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}><Skeleton w="45%" h={15} /><Skeleton w={80} h={24} r={12} /></div>
                   <Skeleton w="30%" h={12} />
                   <div style={{ display: 'flex', gap: 8 }}><Skeleton w={100} h={12} /><Skeleton w={80} h={12} /></div>
                 </div>
@@ -737,48 +571,29 @@ export default function VendorBookingsPage() {
               <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--gray-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                 <CalendarCheck size={22} color="var(--text-muted)" />
               </div>
-              <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
-                {search ? 'Booking tidak ditemukan' : 'Belum ada booking'}
-              </p>
-              <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                {search ? `Tidak ada hasil untuk "${search}"` : 'Booking dari klien akan muncul di sini'}
-              </p>
+              <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{search ? 'Booking tidak ditemukan' : 'Belum ada booking'}</p>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>{search ? `Tidak ada hasil untuk "${search}"` : 'Booking dari klien akan muncul di sini'}</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {filtered.map(b => (
-                <div key={b.id}
-                  style={{ background: 'white', borderRadius: 14, padding: '16px 20px', border: `1px solid ${b.status === 'pending' ? '#fde68a' : 'var(--gray-100)'}`, boxShadow: b.status === 'pending' ? '0 0 0 2px rgba(245,166,35,0.12)' : 'var(--shadow-sm)', cursor: 'pointer', transition: 'all 0.18s' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = b.status === 'pending' ? '0 0 0 2px rgba(245,166,35,0.12)' : 'var(--shadow-sm)'; (e.currentTarget as HTMLElement).style.transform = 'none'; }}
+                <div key={b.id} className="booking-card" style={{ borderColor: b.status === 'pending' ? '#fde68a' : 'var(--gray-100)', boxShadow: b.status === 'pending' ? '0 0 0 2px rgba(245,166,35,0.12)' : 'var(--shadow-sm)' }}
                   onClick={() => setSelectedBooking(b)}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.event_name}</span>
-                        {b.status === 'pending' && (
-                          <span style={{ fontSize: 10, fontWeight: 700, background: '#fef3c7', color: '#d97706', borderRadius: 99, padding: '2px 7px', letterSpacing: '0.06em' }}>PERLU AKSI</span>
-                        )}
+                        <span className="booking-title">{b.event_name}</span>
+                        {b.status === 'pending' && <span style={{ fontSize: 10, fontWeight: 700, background: '#fef3c7', color: '#d97706', borderRadius: 99, padding: '2px 7px', letterSpacing: '0.06em', flexShrink: 0 }}>PERLU AKSI</span>}
                       </div>
-                      <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                        dari <strong style={{ color: 'var(--text-secondary)' }}>{b.user?.full_name ?? b.user?.email ?? 'Klien'}</strong>
-                      </div>
+                      <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>dari <strong style={{ color: 'var(--text-secondary)' }}>{b.user?.full_name ?? b.user?.email ?? 'Klien'}</strong></div>
                     </div>
                     <StatusBadge status={b.status} />
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <CalendarDays size={11} /> {fmtDateShort(b.event_date)}
-                    </span>
-                    <span style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <MapPin size={11} /> {b.event_location}
-                    </span>
-                    {b.service && (
-                      <span style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <Package size={11} /> {b.service.name}
-                      </span>
-                    )}
+                  <div className="booking-meta">
+                    <span style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}><CalendarDays size={11} /> {fmtDateShort(b.event_date)}</span>
+                    <span className="booking-meta-location" style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} /> {b.event_location}</span>
+                    {b.service && <span className="booking-meta-service" style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}><Package size={11} /> {b.service.name}</span>}
                     <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>{timeAgo(b.created_at)}</span>
                   </div>
 
@@ -791,10 +606,7 @@ export default function VendorBookingsPage() {
                       </button>
                       <button onClick={() => handleAction('confirm', b)} disabled={!!actionLoading}
                         style={{ padding: '7px 16px', borderRadius: 8, border: 'none', background: 'var(--forest)', color: 'white', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 5 }}>
-                        {actionLoading === `${b.id}-confirm`
-                          ? <><span style={{ width: 12, height: 12, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> Konfirmasi...</>
-                          : <><CheckCircle2 size={12} /> Konfirmasi</>
-                        }
+                        {actionLoading === `${b.id}-confirm` ? <><span className="btn-spinner btn-spinner-sm" /> Konfirmasi...</> : <><CheckCircle2 size={12} /> Konfirmasi</>}
                       </button>
                       <button onClick={() => setSelectedBooking(b)}
                         style={{ marginLeft: 'auto', padding: '7px 12px', borderRadius: 8, border: '1.5px solid var(--gray-200)', background: 'white', color: 'var(--text-secondary)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -804,14 +616,10 @@ export default function VendorBookingsPage() {
                   )}
 
                   {b.status === 'waiting_payment' && b.dp_proof_url && (
-                    <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--gray-100)' }}
-                      onClick={e => e.stopPropagation()}>
+                    <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--gray-100)' }} onClick={e => e.stopPropagation()}>
                       <button onClick={() => handleAction('verify_dp', b)} disabled={!!actionLoading}
                         style={{ padding: '7px 16px', borderRadius: 8, border: 'none', background: '#7c3aed', color: 'white', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 5 }}>
-                        {actionLoading === `${b.id}-verify_dp`
-                          ? <><span style={{ width: 12, height: 12, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> Memverifikasi...</>
-                          : <><ShieldCheck size={12} /> Verifikasi DP</>
-                        }
+                        {actionLoading === `${b.id}-verify_dp` ? <><span className="btn-spinner btn-spinner-sm" /> Memverifikasi...</> : <><ShieldCheck size={12} /> Verifikasi DP</>}
                       </button>
                     </div>
                   )}
@@ -822,16 +630,12 @@ export default function VendorBookingsPage() {
 
           {totalPages > 1 && (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 28 }}>
-              <button
-                onClick={handlePrevPage}
-                disabled={page === 1 || loading}
+              <button onClick={() => { if (page > 1 && !loading) { const n = page - 1; setPage(n); loadBookings(activeTab, n); } }} disabled={page === 1 || loading}
                 style={{ padding: '8px 14px', borderRadius: 10, border: '1.5px solid var(--gray-200)', background: 'white', color: page === 1 ? 'var(--text-muted)' : 'var(--text-primary)', cursor: page === 1 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, fontWeight: 600, fontFamily: 'inherit' }}>
                 <ChevronLeft size={15} /> Prev
               </button>
               <span style={{ fontSize: 13, color: 'var(--text-muted)', padding: '0 8px' }}>Halaman {page} / {totalPages}</span>
-              <button
-                onClick={handleNextPage}
-                disabled={page === totalPages || loading}
+              <button onClick={() => { if (page < totalPages && !loading) { const n = page + 1; setPage(n); loadBookings(activeTab, n); } }} disabled={page === totalPages || loading}
                 style={{ padding: '8px 14px', borderRadius: 10, border: '1.5px solid var(--gray-200)', background: 'white', color: page === totalPages ? 'var(--text-muted)' : 'var(--text-primary)', cursor: page === totalPages ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, fontWeight: 600, fontFamily: 'inherit' }}>
                 Next <ChevronRight size={15} />
               </button>
@@ -840,44 +644,149 @@ export default function VendorBookingsPage() {
         </main>
       </div>
 
-      {selectedBooking && (
-        <BookingDrawer
-          booking={selectedBooking}
-          onClose={() => setSelectedBooking(null)}
-          onAction={handleAction}
-          actionLoading={actionLoading}
-        />
-      )}
-
-      {rejectTarget && (
-        <RejectModal
-          booking={rejectTarget}
-          onClose={() => setRejectTarget(null)}
-          onDone={handleRejectDone}
-        />
-      )}
-
+      {selectedBooking && <BookingDrawer booking={selectedBooking} onClose={() => setSelectedBooking(null)} onAction={handleAction} actionLoading={actionLoading} />}
+      {rejectTarget && <RejectModal booking={rejectTarget} onClose={() => setRejectTarget(null)} onDone={handleRejectDone} />}
       {clarifyTarget && (
-        <ClarifyModal
-          booking={clarifyTarget}
-          onClose={() => setClarifyTarget(null)}
+        <ClarifyModal booking={clarifyTarget} onClose={() => setClarifyTarget(null)}
           onDone={(updated) => {
             setBookings(prev => prev.map(b => b.id === updated.id ? updated : b));
             if (selectedBooking?.id === updated.id) setSelectedBooking(updated);
             setClarifyTarget(null);
             showToast('Klarifikasi berhasil dikirim. User diminta upload ulang bukti DP.', 'success');
-          }}
-        />
+          }} />
       )}
-
       {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
       <style>{`
-        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes slideRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+        @keyframes shimmer   { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes spin      { to { transform: rotate(360deg); } }
+        @keyframes slideRight{ from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+        @keyframes slideUp   { from{transform:translateX(-50%) translateY(20px);opacity:0} to{transform:translateX(-50%) translateY(0);opacity:1} }
+        @keyframes sheetUp   { from{transform:translateY(100%)} to{transform:translateY(0)} }
+
         .spin-icon { animation: spin 1s linear infinite; }
+
+        .btn-spinner {
+          width: 14px; height: 14px; border-radius: 50%; display: inline-block;
+          border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+          animation: spin 0.7s linear infinite;
+        }
+        .btn-spinner-sm { width: 12px; height: 12px; }
+
+        .vendor-sidebar {
+          position: fixed; top: 0; left: 0; height: 100vh; width: 240px;
+          display: flex; flex-direction: column; z-index: 40;
+          transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+          transform: translateX(-100%);
+        }
+        .sidebar-close-btn {
+          background: rgba(255,255,255,0.08); border: none; border-radius: 8px;
+          padding: 6px; cursor: pointer; color: rgba(255,255,255,0.6); display: flex;
+        }
+        .vendor-main { margin-left: 0; min-height: 100vh; }
+
+        .bookings-header {
+          position: sticky; top: 0; z-index: 20;
+          background: rgba(249,249,247,0.92); backdrop-filter: blur(12px);
+          border-bottom: 1px solid var(--gray-100);
+          padding: 0 24px; height: 64px;
+          display: flex; align-items: center; gap: 12;
+        }
+        .header-menu-btn {
+          background: white; border: 1px solid var(--gray-200); border-radius: 10px;
+          padding: 9px; cursor: pointer; color: var(--text-secondary);
+          display: flex; box-shadow: var(--shadow-sm); flex-shrink: 0;
+        }
+        .header-refresh-btn {
+          margin-left: auto; background: white; border: 1px solid var(--gray-200);
+          border-radius: 10px; padding: 9px; cursor: pointer;
+          color: var(--text-secondary); display: flex; box-shadow: var(--shadow-sm);
+        }
+        .pending-badge {
+          display: inline-flex; align-items: center; justify-content: center;
+          width: 20px; height: 20px; border-radius: 50%;
+          background: #ef4444; color: white; font-size: 11px; font-weight: 700;
+        }
+
+        .bookings-main { padding: 24px 24px 60px; max-width: 1000px; margin: 0 auto; }
+
+        .booking-card {
+          background: white; border-radius: 14px; padding: 16px 20px;
+          border: 1px solid var(--gray-100); cursor: pointer; transition: all 0.18s;
+        }
+        .booking-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+        .booking-title {
+          font-size: 15px; font-weight: 700; color: var(--text-primary);
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .booking-meta {
+          display: flex; align-items: center; gap: 14; flex-wrap: wrap;
+        }
+
+        .drawer-backdrop {
+          position: fixed; inset: 0; z-index: 50; display: flex;
+        }
+        .drawer-panel {
+          width: 100%; max-width: 480px; background: white; height: 100%;
+          overflowY: auto; box-shadow: -8px 0 48px rgba(0,0,0,0.15);
+          animation: slideRight 0.3s cubic-bezier(0.22,1,0.36,1);
+          margin-left: auto;
+        }
+        .drawer-handle-wrap { display: none; }
+        .drawer-handle { width: 40px; height: 4px; background: #e5e7eb; border-radius: 2px; margin: 14px auto 0; }
+
+        .modal-backdrop {
+          position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+          z-index: 60; display: flex; align-items: center; justify-content: center; padding: 24px;
+        }
+        .modal-box {
+          background: white; border-radius: 20px; padding: 28px;
+          max-width: 480px; width: 100%; box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+        }
+
+        .toast-bar {
+          position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+          z-index: 100; color: white; border-radius: 14px;
+          padding: 13px 22px; font-size: 14px; font-weight: 600;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+          display: flex; align-items: center; gap: 10;
+          max-width: 420px; animation: slideUp 0.3s ease;
+          white-space: nowrap;
+        }
+
+        @media (min-width: 1024px) {
+          .vendor-sidebar { transform: translateX(0) !important; }
+          .vendor-main    { margin-left: 240px !important; }
+          .sidebar-close-btn { display: none; }
+        }
+
+        @media (max-width: 768px) {
+          .bookings-main    { padding: 16px 16px 60px; }
+          .bookings-header  { padding: 0 16px; }
+          .booking-meta-location { display: none !important; }
+          /* Drawer becomes bottom sheet */
+          .drawer-backdrop  { align-items: flex-end; background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); }
+          .drawer-panel {
+            max-width: 100% !important; height: 92vh !important;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -8px 48px rgba(0,0,0,0.18);
+            animation: sheetUp 0.35s cubic-bezier(0.22,1,0.36,1) !important;
+            margin-left: 0 !important;
+            overflow-y: auto;
+          }
+          .drawer-handle-wrap { display: block !important; }
+          .modal-backdrop   { align-items: flex-end; padding: 0; }
+          .modal-box        { border-radius: 20px 20px 0 0; max-width: 100%; padding: 24px 20px 36px; }
+          .toast-bar        { left: 16px; right: 16px; transform: none; max-width: unset; white-space: normal; }
+        }
+
+        @media (max-width: 640px) {
+          .booking-card     { padding: 14px 14px; }
+          .booking-title    { font-size: 14px; }
+          .booking-meta-service { display: none !important; }
+          .bookings-main    { padding: 12px 12px 60px; }
+          .bookings-header  { height: 56px; padding: 0 12px; }
+        }
       `}</style>
     </div>
   );
