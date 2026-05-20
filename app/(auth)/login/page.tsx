@@ -26,18 +26,11 @@ function LoginForm() {
       });
       const data = await res.json();
       if (!data.success) { setError(data.error ?? 'Email atau password salah.'); return; }
-
-      // Redirect berdasarkan role
       const role = data.data?.user?.role;
-      if (redirectTo && redirectTo !== '/') {
-        router.push(redirectTo);
-      } else if (role === 'admin') {
-        router.push('/admin/vendors');
-      } else if (role === 'vendor') {
-        router.push('/vendor/dashboard');
-      } else {
-        router.push('/dashboard');
-      }
+      if (redirectTo && redirectTo !== '/') router.push(redirectTo);
+      else if (role === 'admin') router.push('/admin/vendors');
+      else if (role === 'vendor') router.push('/vendor/dashboard');
+      else router.push('/dashboard');
       router.refresh();
     } catch { setError('Terjadi kesalahan. Coba lagi.'); }
     finally { setLoading(false); }
@@ -51,14 +44,29 @@ function LoginForm() {
     } catch { setError('Gagal login dengan Google.'); }
   };
 
+  const inputSt = (isFocused: boolean): React.CSSProperties => ({
+    width: '100%', padding: '13px 16px', borderRadius: 12, fontSize: 14,
+    outline: 'none', fontFamily: 'inherit', color: '#0f172a',
+    background: '#fafafa', boxSizing: 'border-box',
+    border: `1.5px solid ${isFocused ? '#0d3b2e' : '#e2e8f0'}`,
+    boxShadow: isFocused ? '0 0 0 3px rgba(13,59,46,0.08)' : 'none',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+  });
+
   return (
-    <div style={wrapStyle}>
+    <div className="login-wrap">
       <LeftPanel />
 
-      <div style={rightStyle}>
-        <div style={cardStyle}>
+      <div className="login-right">
+        <div className="login-mobile-logo">
+          <Link href="/">
+            <img src="/logo_findor.jpg" alt="Findor"
+              style={{ height: 38, width: 'auto', objectFit: 'contain', borderRadius: 8 }} />
+          </Link>
+        </div>
 
-          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <div className="login-card">
+          <div className="login-card-logo">
             <Link href="/">
               <img src="/logo_findor.jpg" alt="Findor"
                 style={{ height: 44, width: 'auto', objectFit: 'contain', borderRadius: 10 }} />
@@ -66,13 +74,7 @@ function LoginForm() {
           </div>
 
           <div style={{ textAlign: 'center', marginBottom: 30 }}>
-            <h1 style={{
-              fontSize: 27, fontWeight: 900, color: '#0f172a',
-              letterSpacing: '-0.7px', marginBottom: 6,
-              fontFamily: 'Fraunces, serif',
-            }}>
-              Selamat Datang Kembali
-            </h1>
+            <h1 className="login-title">Selamat Datang Kembali</h1>
             <p style={{ fontSize: 14, color: '#94a3b8' }}>Masuk untuk melanjutkan ke Findor 👋</p>
           </div>
 
@@ -89,9 +91,8 @@ function LoginForm() {
           )}
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-
             <div>
-              <label style={labelSt}>Email</label>
+              <label className="login-label">Email</label>
               <input
                 type="email" required value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -103,7 +104,7 @@ function LoginForm() {
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
-                <label style={labelSt}>Password</label>
+                <label className="login-label" style={{ margin: 0 }}>Password</label>
                 <Link href="#" style={{ fontSize: 12, color: '#0d3b2e', fontWeight: 600, textDecoration: 'none' }}>
                   Lupa password?
                 </Link>
@@ -125,18 +126,13 @@ function LoginForm() {
 
             <button
               type="submit" disabled={loading}
+              className="login-submit-btn"
               style={{
-                marginTop: 4, width: '100%', padding: '15px 20px', borderRadius: 14,
                 background: loading ? '#e5e7eb' : '#0d3b2e',
                 color: loading ? '#9ca3af' : 'white',
-                fontSize: 15, fontWeight: 700, border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                fontFamily: 'inherit', transition: 'all 0.2s',
                 boxShadow: loading ? 'none' : '0 4px 20px rgba(13,59,46,0.28)',
               }}
-              onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#145740'; }}
-              onMouseLeave={e => { if (!loading) e.currentTarget.style.background = '#0d3b2e'; }}
             >
               {loading ? <><Spinner /> Memproses...</> : <>Masuk ke Findor <ArrowRight size={16} /></>}
             </button>
@@ -148,24 +144,8 @@ function LoginForm() {
             <div style={{ flex: 1, height: 1, background: '#f1f5f9' }} />
           </div>
 
-          <button
-            onClick={handleGoogle}
-            style={{
-              width: '100%', padding: '13px', borderRadius: 14,
-              border: '1.5px solid #e2e8f0', background: 'white',
-              fontSize: 14, fontWeight: 600, color: '#374151', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              fontFamily: 'inherit', transition: 'all 0.18s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#c7d2e0'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; e.currentTarget.style.background = '#f9fafb'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'white'; }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
+          <button onClick={handleGoogle} className="login-google-btn">
+            <GoogleIcon />
             Masuk dengan Google
           </button>
 
@@ -173,7 +153,7 @@ function LoginForm() {
             Belum punya akun?{' '}
             <Link href="/register" style={{ color: '#0d3b2e', fontWeight: 700, textDecoration: 'none' }}>Daftar gratis</Link>
           </p>
-          <p style={{ fontSize: 11, color: '#cbd5e1', textAlign: 'center', marginTop: 10, lineHeight: 1.7 }}>
+          <p className="login-terms">
             Dengan masuk, Anda menyetujui{' '}
             <Link href="/how-it-works" style={{ color: '#64748b', fontWeight: 600, textDecoration: 'none' }}>Syarat & Ketentuan</Link>
             {' '}dan{' '}
@@ -190,27 +170,25 @@ function LoginForm() {
 
 function LeftPanel() {
   return (
-    <div style={{
-      flex: '0 0 44%', position: 'relative', overflow: 'hidden',
-      background: 'linear-gradient(160deg, #0a2e20 0%, #0d3b2e 50%, #1a5c41 100%)',
-    }}>
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=900&q=80)', backgroundSize: 'cover', backgroundPosition: 'center 40%', opacity: 0.10 }} />
-      <div style={{ position: 'absolute', top: -100, right: -100, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%)' }} />
-      <div style={{ position: 'absolute', bottom: -80, left: -80, width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(circle, rgba(64,145,108,0.18) 0%, transparent 70%)' }} />
+    <div className="login-left">
+      <div className="login-left-bg" />
+      <div className="login-left-glow1" />
+      <div className="login-left-glow2" />
 
-      <div style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '48px 40px' }}>
+      <div className="login-left-inner">
         <Link href="/">
-          <img src="/logo_findor.jpg" alt="Findor" style={{ height: 44, width: 'auto', objectFit: 'contain', borderRadius: 10 }} />
+          <img src="/logo_findor.jpg" alt="Findor"
+            style={{ height: 44, width: 'auto', objectFit: 'contain', borderRadius: 10 }} />
         </Link>
 
         <div>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#f5a623', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>✦ Platform Event Indonesia</p>
-          <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 38, fontWeight: 900, color: 'white', lineHeight: 1.1, letterSpacing: '-1.5px', marginBottom: 20 }}>
+          <p className="login-left-eyebrow">✦ Platform Event Indonesia</p>
+          <h2 className="login-left-heading">
             Semua Vendor<br />
-            <em style={{ fontStyle: 'italic', color: '#f5a623', fontWeight: 300 }}>Terpercaya</em><br />
+            <em>Terpercaya</em><br />
             Ada di Sini
           </h2>
-          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', lineHeight: 1.8, maxWidth: 280 }}>
+          <p className="login-left-sub">
             Dari sound system hingga wedding organizer, temukan dan pesan vendor terbaik untuk acara Anda.
           </p>
         </div>
@@ -222,53 +200,197 @@ function LeftPanel() {
             { icon: <Star size={15} />,  text: 'Ribuan ulasan nyata dari pengguna' },
           ].map(item => (
             <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f5a623' }}>
-                {item.icon}
-              </div>
-              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{item.text}</span>
+              <div className="login-feature-icon">{item.icon}</div>
+              <span className="login-feature-text">{item.text}</span>
             </div>
           ))}
         </div>
 
-        <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: '16px 20px', backdropFilter: 'blur(10px)' }}>
+        <div className="login-testimonial">
           <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginBottom: 6 }}>
             {[1,2,3,4,5].map(i => <Star key={i} size={13} fill="#f5a623" color="#f5a623" />)}
             <span style={{ fontSize: 13, fontWeight: 700, color: 'white', marginLeft: 6 }}>4.9/5</span>
           </div>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, margin: 0 }}>
+          <p className="login-testimonial-text">
             &ldquo;Berkat Findor, kami menemukan vendor sound system terbaik untuk konser kami dalam waktu singkat!&rdquo;
           </p>
-          <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 8 }}>— Budi S., Event Organizer Surabaya</p>
+          <p className="login-testimonial-author">— Budi S., Event Organizer Surabaya</p>
         </div>
       </div>
     </div>
   );
 }
 
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
+  );
+}
+
 function Spinner() {
-  return <span style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />;
+  return (
+    <span style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+  );
 }
 
 function Styles() {
   return (
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300&display=swap');
-      @keyframes spin  { to { transform: rotate(360deg); } }
-      @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)} }
-      @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+      @keyframes spin    { to { transform: rotate(360deg); } }
+      @keyframes shake   { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)} }
+      @keyframes fadeUp  { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+      .login-wrap {
+        display: flex; min-height: 100vh;
+        font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+      }
+
+      .login-left {
+        flex: 0 0 44%; position: relative; overflow: hidden;
+        background: linear-gradient(160deg, #0a2e20 0%, #0d3b2e 50%, #1a5c41 100%);
+      }
+      .login-left-bg {
+        position: absolute; inset: 0;
+        background-image: url(https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=900&q=80);
+        background-size: cover; background-position: center 40%; opacity: 0.10;
+      }
+      .login-left-glow1 {
+        position: absolute; top: -100px; right: -100px;
+        width: 360px; height: 360px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
+      }
+      .login-left-glow2 {
+        position: absolute; bottom: -80px; left: -80px;
+        width: 280px; height: 280px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(64,145,108,0.18) 0%, transparent 70%);
+      }
+      .login-left-inner {
+        position: relative; z-index: 2; height: 100%;
+        display: flex; flex-direction: column;
+        justify-content: space-between; padding: 48px 40px;
+      }
+      .login-left-eyebrow {
+        font-size: 11px; font-weight: 700; color: #f5a623;
+        letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;
+      }
+      .login-left-heading {
+        font-family: 'Fraunces', serif; font-size: 38px;
+        font-weight: 900; color: white; line-height: 1.1;
+        letter-spacing: -1.5px; margin-bottom: 20px;
+      }
+      .login-left-heading em { font-style: italic; color: #f5a623; font-weight: 300; }
+      .login-left-sub {
+        font-size: 14px; color: rgba(255,255,255,0.55);
+        line-height: 1.8; max-width: 280px;
+      }
+      .login-feature-icon {
+        width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        display: flex; align-items: center; justify-content: center;
+        color: #f5a623;
+      }
+      .login-feature-text { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 500; }
+      .login-testimonial {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px; padding: 16px 20px;
+        backdrop-filter: blur(10px);
+      }
+      .login-testimonial-text { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.6; margin: 0; }
+      .login-testimonial-author { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 8px; }
+
+      .login-right {
+        flex: 1; overflow-y: auto;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        background: #f8fafc; padding: 40px 24px;
+      }
+      .login-mobile-logo { display: none; margin-bottom: 24px; }
+
+      .login-card {
+        width: 100%; max-width: 460px;
+        background: white; border-radius: 24px;
+        padding: 44px 48px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+        animation: fadeUp 0.5s ease both;
+      }
+      .login-card-logo { text-align: center; margin-bottom: 32px; }
+      .login-title {
+        font-size: 27px; font-weight: 900; color: #0f172a;
+        letter-spacing: -0.7px; margin-bottom: 6px;
+        font-family: 'Fraunces', serif;
+      }
+      .login-label {
+        font-size: 13px; font-weight: 700; color: #374151;
+        letter-spacing: 0.01em; display: block; margin-bottom: 7px;
+      }
+      .login-submit-btn {
+        margin-top: 4px; width: 100%; padding: 15px 20px;
+        border-radius: 14px; font-size: 15px; font-weight: 700;
+        border: none; font-family: inherit; transition: all 0.2s;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+      }
+      .login-google-btn {
+        width: 100%; padding: 13px; border-radius: 14px;
+        border: 1.5px solid #e2e8f0; background: white;
+        font-size: 14px; font-weight: 600; color: #374151; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        font-family: inherit; transition: all 0.18s;
+      }
+      .login-google-btn:hover {
+        border-color: #c7d2e0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        background: #f9fafb;
+      }
+      .login-terms {
+        font-size: 11px; color: #cbd5e1;
+        text-align: center; margin-top: 10px; line-height: 1.7;
+      }
+
+      @media (max-width: 900px) {
+        .login-left { flex: 0 0 38%; }
+        .login-left-inner { padding: 36px 28px; }
+        .login-left-heading { font-size: 30px; }
+        .login-left-sub { display: none; }
+        .login-card { padding: 36px 32px; }
+      }
+
       @media (max-width: 768px) {
-        .left-panel { display: none !important; }
+        .login-left { display: none !important; }
+        .login-right { padding: 32px 16px; justify-content: flex-start; }
+        .login-mobile-logo { display: flex; justify-content: center; }
+        .login-card-logo { display: none; }
+        .login-card {
+          padding: 32px 24px;
+          border-radius: 20px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        }
+        .login-title { font-size: 24px; }
+      }
+
+      @media (max-width: 480px) {
+        .login-right { padding: 24px 16px; background: white; }
+        .login-card {
+          padding: 24px 20px;
+          border-radius: 16px;
+          box-shadow: none;
+          border: 1px solid #f1f5f9;
+        }
+        .login-title { font-size: 22px; }
+        .login-mobile-logo { margin-bottom: 20px; }
+        .login-submit-btn { padding: 14px 16px; font-size: 14px; }
+        .login-terms { font-size: 10.5px; }
       }
     `}</style>
   );
-}
-
-const wrapStyle: React.CSSProperties = { display: 'flex', minHeight: '100vh', fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' };
-const rightStyle: React.CSSProperties = { flex: 1, overflowY: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '40px 24px' };
-const cardStyle: React.CSSProperties = { width: '100%', maxWidth: 460, background: 'white', borderRadius: 24, padding: '44px 48px', boxShadow: '0 8px 40px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)', animation: 'fadeUp 0.5s ease both' };
-const labelSt: React.CSSProperties = { fontSize: 13, fontWeight: 700, color: '#374151', letterSpacing: '0.01em', display: 'block', marginBottom: 7 };
-function inputSt(focused: boolean): React.CSSProperties {
-  return { width: '100%', padding: '13px 16px', borderRadius: 12, fontSize: 14, outline: 'none', fontFamily: 'inherit', color: '#0f172a', background: '#fafafa', boxSizing: 'border-box' as const, border: `1.5px solid ${focused ? '#0d3b2e' : '#e2e8f0'}`, boxShadow: focused ? '0 0 0 3px rgba(13,59,46,0.08)' : 'none', transition: 'border-color 0.2s, box-shadow 0.2s' };
 }
 
 export default function LoginPage() {
