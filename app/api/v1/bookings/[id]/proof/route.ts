@@ -61,15 +61,17 @@ export async function POST(
     });
     if (fileError) return badRequest(fileError);
 
+    const adminSupabase = createAdminClient();
+
     if (booking.dp_proof_url) {
       const oldPath = booking.dp_proof_url.replace("booking-proofs/", "");
-      await supabase.storage.from("booking-proofs").remove([oldPath]);
+      await adminSupabase.storage.from("booking-proofs").remove([oldPath]);
     }
 
     const ext      = file.name.split(".").pop();
     const filePath = `${booking.vendor_id}/${id}/dp-${Date.now()}.${ext}`;
 
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await adminSupabase.storage
       .from("booking-proofs")
       .upload(filePath, file, { contentType: file.type, upsert: false });
 
@@ -78,7 +80,6 @@ export async function POST(
     }
 
     const dp_proof_url  = `booking-proofs/${filePath}`;
-    const adminSupabase = createAdminClient();
 
     const updatePayload: Record<string, unknown> = {
       dp_proof_url,
@@ -100,12 +101,12 @@ export async function POST(
       .single();
 
     if (updateError) {
-      await supabase.storage.from("booking-proofs").remove([filePath]);
+      await adminSupabase.storage.from("booking-proofs").remove([filePath]);
       return serverError(updateError.message);
     }
 
     if (!updated) {
-      await supabase.storage.from("booking-proofs").remove([filePath]);
+      await adminSupabase.storage.from("booking-proofs").remove([filePath]);
       return forbidden("Gagal memperbarui booking. Pastikan kamu adalah pemilik booking ini.");
     }
 
