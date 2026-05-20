@@ -59,6 +59,7 @@ export async function GET(
       .select(
         `id, store_name, slug, category, city, address, whatsapp_number,
          description, ktp_url, selfie_url, is_verified, is_active,
+         rating_avg, review_count,
          created_at, updated_at,
          user:user_profiles(id, email, full_name, phone, created_at)`
       )
