@@ -205,7 +205,6 @@ export default function AboutPage() {
       <Footer />
 
       <style>{`
-        /* ── Hero ── */
         .about-hero {
           background: var(--forest);
           padding: 120px 24px 90px;
@@ -243,7 +242,6 @@ export default function AboutPage() {
         .about-hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
         .about-btn { font-size: 14px !important; padding: 11px 24px !important; }
 
-        /* ── Layout helpers ── */
         .about-section { padding: 80px 24px; }
         .about-section-gray { background: var(--gray-50); }
         .about-section-white { background: var(--white); }
@@ -256,7 +254,6 @@ export default function AboutPage() {
         }
         .about-section-sub { color: var(--text-secondary); font-size: 15px; }
 
-        /* ── Stats ── */
         .about-stats-section {
           background: var(--white);
           border-bottom: 1px solid var(--gray-100);
@@ -279,7 +276,6 @@ export default function AboutPage() {
         }
         .stat-label { font-size: 13px; color: var(--text-secondary); }
 
-        /* ── Story ── */
         .story-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -316,7 +312,6 @@ export default function AboutPage() {
         .story-img-badge-label { font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
         .story-img-badge-value { font-size: 13px; font-weight: 700; color: var(--white); }
 
-        /* ── Milestones ── */
         .milestone-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
@@ -338,7 +333,6 @@ export default function AboutPage() {
         .milestone-desc-muted { color: rgba(255,255,255,0.6); }
         .milestone-desc-secondary { color: var(--text-secondary); }
 
-        /* ── Values ── */
         .values-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -359,7 +353,6 @@ export default function AboutPage() {
         .value-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
         .value-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
 
-        /* ── Team ── */
         .team-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
@@ -379,7 +372,6 @@ export default function AboutPage() {
         .team-name { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
         .team-role { font-size: 12px; color: var(--text-secondary); }
 
-        /* ── CTA ── */
         .about-cta-box {
           background: var(--forest); border-radius: var(--radius-xl);
           padding: 56px 48px; text-align: center;
@@ -407,9 +399,6 @@ export default function AboutPage() {
         }
         .about-cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-        /* ══ RESPONSIVE ══ */
-
-        /* Tablet ≤ 1024px */
         @media (max-width: 1024px) {
           .milestone-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .team-grid      { grid-template-columns: repeat(2, 1fr) !important; }
@@ -419,7 +408,6 @@ export default function AboutPage() {
           .about-cta-title { font-size: 28px; }
         }
 
-        /* Tablet kecil ≤ 768px */
         @media (max-width: 768px) {
           .story-grid     { grid-template-columns: 1fr !important; gap: 32px; }
           .values-grid    { grid-template-columns: 1fr !important; }
@@ -440,7 +428,6 @@ export default function AboutPage() {
           .team-card:hover { transform: none; }
         }
 
-        /* Mobile ≤ 640px */
         @media (max-width: 640px) {
           .about-hero     { padding: 100px 16px 60px; }
           .about-hero-sub { font-size: 14px; }
