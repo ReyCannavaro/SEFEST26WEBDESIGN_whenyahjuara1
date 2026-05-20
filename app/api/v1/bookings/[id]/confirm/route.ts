@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   ok,
   unauthorized,
@@ -29,7 +30,55 @@ export async function PATCH(
       }
     );
 
-    if (rpcError) return serverError(rpcError.message);
+    if (!rpcError && result?.success) {
+      return ok({
+        booking: result.booking,
+        message:
+          "Booking dikonfirmasi dan tanggal telah dikunci. User perlu mengupload bukti DP.",
+      });
+    }
+
+    if (rpcError || (result && !result.success && result.code === "DATE_CONFLICT")) {
+      const adminSupabase = createAdminClient();
+
+      const { data: booking } = await supabase
+        .from("bookings")
+        .select("id, status, event_date, vendor_id, vendor:vendor_profiles!vendor_id(id, user_id)")
+        .eq("id", id)
+        .single();
+
+      if (!booking) return notFound("Booking tidak ditemukan.");
+
+      const vendorProfile = Array.isArray(booking.vendor) ? booking.vendor[0] : booking.vendor;
+      if (!vendorProfile || vendorProfile.user_id !== user.id) {
+        return forbidden("Kamu bukan pemilik vendor ini.");
+      }
+
+      if (booking.status !== "pending") {
+        return conflict(`Status booking tidak bisa dikonfirmasi. Status saat ini: ${booking.status}.`);
+      }
+
+      const { data: updated, error: updateError } = await adminSupabase
+        .from("bookings")
+        .update({ status: "confirmed", updated_at: new Date().toISOString() })
+        .eq("id", id)
+        .select("id, status, event_date, updated_at")
+        .single();
+
+      if (updateError) return serverError(updateError.message);
+
+      await adminSupabase
+        .from("availability_blocks")
+        .upsert(
+          { vendor_id: vendorProfile.id, date: booking.event_date, status: "booked", booking_id: id },
+          { onConflict: "vendor_id,date" }
+        );
+
+      return ok({
+        booking: updated,
+        message: "Booking dikonfirmasi dan tanggal telah dikunci. User perlu mengupload bukti DP.",
+      });
+    }
 
     if (!result.success) {
       switch (result.code) {
@@ -38,18 +87,13 @@ export async function PATCH(
         case "FORBIDDEN":
           return forbidden(result.message);
         case "INVALID_STATUS":
-        case "DATE_CONFLICT":
           return conflict(result.message);
         default:
           return serverError(result.message);
       }
     }
 
-    return ok({
-      booking: result.booking,
-      message:
-        "Booking dikonfirmasi dan tanggal telah dikunci. User perlu mengupload bukti DP.",
-    });
+    return serverError();
   } catch {
     return serverError();
   }
