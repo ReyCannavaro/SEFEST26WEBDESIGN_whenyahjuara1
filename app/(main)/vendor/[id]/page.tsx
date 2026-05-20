@@ -164,10 +164,10 @@ function AvailabilityCalendar({ vendorId }: { vendorId: string }) {
     if (!day) return 'empty';
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const todayStr = today.toISOString().slice(0, 10);
-    if (dateStr <= todayStr) return 'past';
+    if (dateStr < todayStr) return 'past';
     const s = availability[dateStr];
-    if (s === 'full') return 'full';
-    if (s === 'off') return 'off';
+    if (s === 'booked') return 'full';
+    if (s === 'blocked') return 'off';
     return 'available';
   }
 
@@ -366,10 +366,36 @@ export default function VendorDetailPage() {
     finally { setBookmarkLoading(false); }
   };
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = vendor?.store_name ?? 'Vendor di Findor';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+        return;
+      } catch {
+        return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = url;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      try {
+        document.execCommand('copy');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch { /* silent */ }
+      document.body.removeChild(el);
+    }
   };
 
   const handleWhatsApp = () => {
