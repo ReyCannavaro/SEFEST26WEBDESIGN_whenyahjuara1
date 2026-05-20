@@ -237,7 +237,7 @@ export default function DashboardPage() {
                   { icon: <CalendarDays size={19} />, label: 'Booking Aktif', value: stats.active, sub: 'Sedang berjalan', href: '/bookings' },
                   { icon: <Heart size={19} />, label: 'Tersimpan', value: bookmarks.length, sub: 'Vendor favorit', href: '/bookmarks' },
                 ].map(s => (
-                  <Link key={s.href} href={s.href} className="stat-card">
+                  <Link key={s.label} href={s.href} className="stat-card">
                     <div className="stat-icon" style={{ width: 42, height: 42, borderRadius: 11, background: '#F3F9F5', display: 'grid', placeItems: 'center', color: '#1C3D2E', flexShrink: 0 }}>
                       {s.icon}
                     </div>
