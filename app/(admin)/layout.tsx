@@ -26,6 +26,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       .catch(() => router.replace("/login"));
   }, [router]);
 
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? "hidden" : "";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setSidebarOpen(false); };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [sidebarOpen]);
+
   const handleLogout = async () => {
     await fetch("/api/v1/auth/logout", { method: "POST" });
     router.replace("/login");
@@ -56,10 +66,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         .anl.act  { background:#0D3B2E; color:white; box-shadow:0 2px 10px rgba(13,59,46,0.22); }
         .logout-btn:hover { background:#FEF2F2 !important; color:#DC2626 !important; }
         @media (max-width:1023px) {
-          .sidebar  { transform:translateX(-100%) !important; }
+          .sidebar      { transform:translateX(-100%) !important; }
           .sidebar.open { transform:translateX(0) !important; box-shadow: 4px 0 32px rgba(0,0,0,0.12); }
-          .main-area { margin-left:0 !important; }
-          .mob-btn  { display:flex !important; }
+          .main-area    { margin-left:0 !important; width:100% !important; }
+          .mob-btn      { display:flex !important; }
+          .adm-header   { padding: 0 14px !important; }
+          .adm-main     { padding: 16px 14px !important; }
+        }
+        @media (max-width:480px) {
+          .adm-header   { padding: 0 12px !important; }
+          .adm-main     { padding: 12px !important; }
+          .adm-user-chip span { display: none !important; }
         }
         @media (min-width:1024px) {
           .sidebar  { transform:translateX(0) !important; position:static !important; height:100vh !important; }
@@ -124,9 +141,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      <div className="main-area" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, marginLeft: 256, width: "calc(100% - 256px)" }}>
+      <div className="main-area" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, marginLeft: 256 }}>
 
-        <header style={{ height: 58, background: "white", borderBottom: "1px solid #EBEBEB", display: "flex", alignItems: "center", padding: "0 24px", gap: 12, position: "sticky", top: 0, zIndex: 10 }}>
+        <header className="adm-header" style={{ height: 58, background: "white", borderBottom: "1px solid #EBEBEB", display: "flex", alignItems: "center", padding: "0 24px", gap: 12, position: "sticky", top: 0, zIndex: 10 }}>
           <button className="mob-btn" onClick={() => setSidebarOpen(v => !v)}
             style={{ display: "none", alignItems: "center", justifyContent: "center", background: "none", border: "none", cursor: "pointer", padding: 6, color: "#374151", borderRadius: 8 }}>
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
@@ -136,7 +153,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {NAV.find((n) => pathname.startsWith(n.href))?.label ?? "Admin Panel"}
           </h1>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 12px 5px 5px", background: "#F7F7F4", borderRadius: 100, border: "1px solid #EBEBEB" }}>
+          <div className="adm-user-chip" style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 12px 5px 5px", background: "#F7F7F4", borderRadius: 100, border: "1px solid #EBEBEB" }}>
             <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#0D3B2E,#2D6A4F)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "white" }}>
               {displayName[0].toUpperCase()}
             </div>
@@ -146,7 +163,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <main style={{ flex: 1, overflowY: "auto", padding: "24px", width: "100%" }}>
+        <main className="adm-main" style={{ flex: 1, overflowY: "auto", padding: "24px", width: "100%" }}>
           {children}
         </main>
       </div>
