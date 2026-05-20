@@ -57,7 +57,6 @@ export async function PATCH(
         .update({
           status: "dp_verified",
           dp_verified_at: new Date().toISOString(),
-          // Bersihkan klarifikasi lama jika ada
           clarification_message: null,
           clarification_at: null,
           updated_at: new Date().toISOString(),
@@ -74,7 +73,7 @@ export async function PATCH(
           {
             vendor_id: booking.vendor_id,
             date: booking.event_date,
-            status: "full",
+            status: "booked",
             booking_id: id,
           },
           { onConflict: "vendor_id,date" }
