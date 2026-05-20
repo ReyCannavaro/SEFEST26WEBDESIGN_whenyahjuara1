@@ -63,7 +63,6 @@ function avatarColor(name: string) {
   return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
 }
 
-/* ─── Dropdown komponen ─── */
 function CustomDropdown({ value, onChange, options, icon: TriggerIcon }: {
   value: string; onChange: (v: string) => void;
   options: { label: string; Icon?: React.ComponentType<{ size?: number; color?: string }> }[];
@@ -601,7 +600,6 @@ function SearchContent() {
         @keyframes cardPop  { 0%{transform:translateY(10px) scale(0.98);opacity:0.6} 60%{transform:translateY(-3px) scale(1.01);opacity:1} 100%{transform:translateY(0) scale(1);opacity:1} }
         @keyframes slideUp  { from{transform:translateY(100%)} to{transform:translateY(0)} }
 
-        /* ── Search bar ── */
         .search-bar-box {
           background: white; border-radius: 18px;
           padding: 14px 16px;
@@ -633,7 +631,6 @@ function SearchContent() {
         }
         .search-btn-cari span { display: inline; }
 
-        /* Pills */
         .hero-pills {
           margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap;
         }
@@ -650,12 +647,10 @@ function SearchContent() {
           border-color: #f5a623; background: #f5a623; color: #0d3b2e;
         }
 
-        /* ── Results layout ── */
         .results-layout {
           display: flex; gap: 28px; align-items: flex-start;
         }
 
-        /* ── Sidebar ── */
         .sidebar-desktop {
           width: 260px; flex-shrink: 0;
           position: sticky; top: 90px;
@@ -710,7 +705,6 @@ function SearchContent() {
           font-family: inherit;
         }
 
-        /* Dropdown shared */
         .dd-trigger {
           width: 100%; display: flex; align-items: center; gap: 8px;
           padding: 10px 12px; border-radius: 12px; border: 1.5px solid;
@@ -725,7 +719,6 @@ function SearchContent() {
           z-index: 50; overflow: hidden;
         }
 
-        /* ── Chips ── */
         .chip {
           font-size: 11px; background: #f0fdf4; color: #16a34a;
           padding: 3px 8px 3px 10px; border-radius: 999px;
@@ -746,7 +739,6 @@ function SearchContent() {
         .desktop-chips { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
         .mobile-chips  { display: flex; gap: 6px; flex-wrap: wrap; overflow-x: auto; }
 
-        /* ── Mobile filter row (FAB) ── */
         .mobile-filter-fab-row {
           display: none;
           align-items: center; gap: 10px;
@@ -769,7 +761,6 @@ function SearchContent() {
           display: flex; align-items: center; justify-content: center;
         }
 
-        /* ── Drawer ── */
         .drawer-backdrop {
           position: fixed; inset: 0; background: rgba(0,0,0,0.45);
           z-index: 9999; display: flex; align-items: flex-end;
@@ -786,7 +777,6 @@ function SearchContent() {
           border-radius: 2px; margin: 14px auto 6px;
         }
 
-        /* ── Vendor grid ── */
         .browse-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -811,13 +801,11 @@ function SearchContent() {
           transition: all 0.15s; font-family: inherit;
         }
 
-        /* Desktop default: sidebar visible, mobile FAB hidden */
         .sidebar-desktop { display: block; }
         .mobile-filter-fab-row { display: none; }
         .desktop-chips { display: flex; }
         .search-bar-dropdowns { display: flex; }
 
-        /* Tablet & Mobile ≤1024px: sidebar collapse, 2-col grid */
         @media screen and (max-width: 1024px) {
           .sidebar-desktop { display: none !important; }
           .mobile-filter-fab-row { display: flex !important; }
@@ -826,7 +814,6 @@ function SearchContent() {
           .search-bar-dropdowns { display: none !important; }
         }
 
-        /* Mobile ≤640px: 1-col grid */
         @media screen and (max-width: 640px) {
           .browse-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
           .search-btn-cari span { display: none !important; }
