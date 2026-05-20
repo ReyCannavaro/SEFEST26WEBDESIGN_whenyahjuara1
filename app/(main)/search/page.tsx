@@ -772,7 +772,7 @@ function SearchContent() {
         /* ── Drawer ── */
         .drawer-backdrop {
           position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-          z-index: 200; display: flex; align-items: flex-end;
+          z-index: 9999; display: flex; align-items: flex-end;
           backdrop-filter: blur(2px);
         }
         .drawer-panel {
@@ -792,13 +792,14 @@ function SearchContent() {
           grid-template-columns: repeat(3, 1fr);
           gap: 20px;
         }
-        .browse-card {
-          background: white; border-radius: 18px; overflow: hidden;
+        .browse-card { background: white; border-radius: 18px; overflow: hidden;
           border: 1px solid #f1f5f9;
           transition: transform 0.25s ease, box-shadow 0.25s ease;
-          cursor: pointer;
-        }
+          cursor: pointer; }
         .browse-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.10); }
+        @media screen and (max-width: 640px) {
+          .browse-card:hover { transform: none; box-shadow: none; }
+        }
 
         .results-highlight { animation: sectionFlash 0.9s ease forwards; }
         .card-pop { animation: cardPop 0.4s ease both; }
@@ -810,19 +811,32 @@ function SearchContent() {
           transition: all 0.15s; font-family: inherit;
         }
 
-        /* Tablet ≤1024px: sidebar collapse, 2-col grid */
-        @media (max-width: 1024px) {
-          .sidebar-desktop { display: none; }
-          .mobile-filter-fab-row { display: flex; }
-          .desktop-chips { display: none; }
-          .browse-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-          .search-bar-dropdowns { display: none; }
+        /* Desktop default: sidebar visible, mobile FAB hidden */
+        .sidebar-desktop { display: block; }
+        .mobile-filter-fab-row { display: none; }
+        .desktop-chips { display: flex; }
+        .search-bar-dropdowns { display: flex; }
+
+        /* Tablet & Mobile ≤1024px: sidebar collapse, 2-col grid */
+        @media screen and (max-width: 1024px) {
+          .sidebar-desktop { display: none !important; }
+          .mobile-filter-fab-row { display: flex !important; }
+          .desktop-chips { display: none !important; }
+          .browse-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+          .search-bar-dropdowns { display: none !important; }
         }
-        @media (max-width: 640px) {
-          .browse-grid { grid-template-columns: 1fr; gap: 14px; }
-          .search-btn-cari span { display: none; }
-          .search-btn-cari { padding: 12px 14px; }
-          .hero-pills { display: none; }
+
+        /* Mobile ≤640px: 1-col grid */
+        @media screen and (max-width: 640px) {
+          .browse-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+          .search-btn-cari span { display: none !important; }
+          .search-btn-cari { padding: 12px 14px !important; }
+          .hero-pills { display: none !important; }
+          .mobile-filter-fab-row { flex-wrap: wrap !important; }
+          .search-bar-box { padding: 10px 12px !important; border-radius: 14px !important; }
+          .search-input-wrap { flex: 1 1 100% !important; }
+          .mobile-chips { flex-wrap: wrap !important; overflow-x: visible !important; }
+          .results-layout { gap: 0 !important; }
         }
       `}</style>
     </main>
