@@ -211,7 +211,7 @@ function HeroSection() {
         .hero-content-wrapper {
           position: relative; z-index: 2;
           max-width: 1200px; margin: 0 auto;
-          padding: 110px clamp(20px, 5vw, 48px) 200px;
+          padding: 130px clamp(20px, 5vw, 48px) 200px;
           width: 100%; height: 100%; display: flex; align-items: center;
         }
         .hero-text-block { max-width: 620px; }
