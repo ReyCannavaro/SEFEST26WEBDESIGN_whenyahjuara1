@@ -37,6 +37,7 @@ function timeAgo(s: string) {
   return `${Math.floor(m / 12)} tahun lalu`;
 }
 
+// Warna avatar berdasarkan huruf pertama
 const AVATAR_COLORS: Record<string, string> = {
   A:'#1C3D2E', B:'#2D6A4F', C:'#40916C', D:'#1B4332', E:'#0D3B2E',
   F:'#2D4739', G:'#1A5C41', H:'#245C45', I:'#1C4D38', J:'#1E5C44',
@@ -89,6 +90,7 @@ function VendorCard({
       }}
     >
       <div style={{ height: 3, background: 'linear-gradient(90deg, #1C3D2E, #40916C)' }} />
+
       <button
         onClick={() => onRemove(item.id, vendor.id)}
         disabled={removing}
@@ -223,7 +225,7 @@ export default function BookmarksPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal]           = useState(0);
   const [search, setSearch]         = useState('');
-  const [removing, setRemoving]     = useState<string | null>(null);
+  const [removing, setRemoving]     = useState<string | null>(null); // bookmarkId yang sedang dihapus
 
   const PER_PAGE = 12;
 
@@ -438,7 +440,6 @@ export default function BookmarksPage() {
             </div>
 
           ) : total === 0 ? (
-            // Empty state
             <div className="section-animate" style={{
               background: '#fff', borderRadius: 20, border: '1px solid #EBEBEB',
               padding: '64px 32px', textAlign: 'center',
