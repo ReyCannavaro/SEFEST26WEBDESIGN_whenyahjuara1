@@ -185,7 +185,7 @@ function StepBar({ current }: { current: number }) {
               </span>
             </div>
             {i < STEPS.length - 1 && (
-              <div style={{ width: 80, height: 2, background: done ? '#16a34a' : 'var(--gray-200)', margin: '0 8px', marginBottom: 22, transition: 'background 0.3s' }} />
+              <div className="vr-step-line" style={{ width: 80, height: 2, background: done ? '#16a34a' : 'var(--gray-200)', margin: '0 8px', marginBottom: 22, transition: 'background 0.3s' }} />
             )}
           </div>
         );
@@ -378,7 +378,7 @@ export default function VendorRegisterPage() {
   return (
     <main style={{ minHeight: '100vh', background: 'var(--gray-50)' }}>
       <Navbar />
-      <section style={{ position: 'relative', background: 'var(--forest)', padding: '48px 24px 56px', overflow: 'hidden' }}>
+      <section className="vr-hero" style={{ position: 'relative', background: 'var(--forest)', padding: '48px 24px 56px', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1400&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08 }} />
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 760, margin: '0 auto', textAlign: 'center' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: 'rgba(255,255,255,0.1)', borderRadius: 100, padding: '5px 14px', marginBottom: 16, border: '1px solid rgba(255,255,255,0.15)' }}>
@@ -395,7 +395,7 @@ export default function VendorRegisterPage() {
         </div>
       </section>
 
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '1fr 340px', gap: 40, alignItems: 'start' }} className="register-grid">
+      <div className="register-grid" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '1fr 340px', gap: 40, alignItems: 'start' }}>
         <div>
           <StepBar current={step} />
 
@@ -577,7 +577,7 @@ export default function VendorRegisterPage() {
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: 10, marginTop: 28, justifyContent: 'space-between' }}>
+            <div className="vr-nav-btns" style={{ display: 'flex', gap: 10, marginTop: 28, justifyContent: 'space-between' }}>
               {step > 1 ? (
                 <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '12px 20px', borderRadius: 12, border: '1.5px solid var(--gray-200)', background: 'white', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
                   <ArrowLeft size={16} /> Kembali
@@ -665,12 +665,28 @@ export default function VendorRegisterPage() {
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
+
         @media (max-width: 900px) {
-          .register-grid { grid-template-columns: 1fr !important; }
-          .info-sidebar { order: -1; }
+          .register-grid  { grid-template-columns: 1fr !important; }
+          .info-sidebar   { order: -1; display: grid !important; grid-template-columns: 1fr 1fr; gap: 14px !important; }
+          .info-sidebar > *:last-child { grid-column: 1 / -1; }
         }
-        @media (max-width: 600px) {
-          .form-card { padding: 24px 20px !important; }
+
+        @media (max-width: 640px) {
+          .vr-hero        { padding: 32px 16px 40px !important; }
+          .vr-hero h1     { font-size: 24px !important; }
+          .register-grid  { padding: 28px 14px 60px !important; gap: 20px !important; }
+          .form-card      { padding: 22px 16px !important; border-radius: 16px !important; }
+          .info-sidebar   { display: flex !important; flex-direction: column !important; gap: 12px !important; }
+          .vr-nav-btns    { flex-direction: row !important; }
+          .vr-nav-btns button { flex: 1 !important; justify-content: center !important; }
+          .vr-step-line   { width: 40px !important; }
+        }
+
+        @media (max-width: 400px) {
+          .vr-step-line   { width: 20px !important; }
+          .form-card      { padding: 18px 14px !important; }
+          .vr-hero h1     { font-size: 21px !important; }
         }
       `}</style>
     </main>
