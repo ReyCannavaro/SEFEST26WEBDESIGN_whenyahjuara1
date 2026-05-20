@@ -146,7 +146,7 @@ export default function VendorDashboardPage() {
 
   return (
     <VendorShell>
-      <div style={{ padding: '28px 24px 60px', maxWidth: 1100, margin: '0 auto' }}>
+      <div className="vd-main" style={{ padding: '28px 24px 60px', maxWidth: 1100, margin: '0 auto' }}>
 
         {error && (
           <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 14, padding: '14px 18px', marginBottom: 24, fontSize: 14, color: '#dc2626', display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -172,7 +172,7 @@ export default function VendorDashboardPage() {
         )}
 
         {vendor && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
+          <div className="vd-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--forest)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
@@ -199,7 +199,7 @@ export default function VendorDashboardPage() {
         )}
 
         {needAction.length > 0 && (
-          <div style={{ background: 'linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%)', borderRadius: 16, padding: '16px 20px', marginBottom: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+          <div className="vd-banner" style={{ background: 'linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%)', borderRadius: 16, padding: '16px 20px', marginBottom: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--amber)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Zap size={20} color="var(--forest)" />
@@ -262,7 +262,7 @@ export default function VendorDashboardPage() {
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)'; (e.currentTarget as HTMLElement).style.transform = 'none'; }}
                     onClick={() => router.push('/vendor/bookings')}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
+                    <div className="vd-booking-row">
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {b.event_name}
@@ -368,8 +368,31 @@ export default function VendorDashboardPage() {
 
       <style>{`
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-        @media (max-width: 1024px) { .stats-grid{grid-template-columns:repeat(2,1fr)!important} .dashboard-cols{grid-template-columns:1fr!important} }
-        @media (max-width: 600px) { .stats-grid{grid-template-columns:1fr 1fr!important} }
+
+        @media (max-width: 1024px) {
+          .stats-grid       { grid-template-columns: repeat(2,1fr) !important; }
+          .dashboard-cols   { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 600px) {
+          .stats-grid       { grid-template-columns: 1fr 1fr !important; }
+        }
+
+        @media (max-width: 639px) {
+          .vd-main          { padding: 16px 12px 80px !important; }
+          .vd-banner        { flex-direction: column !important; align-items: flex-start !important; }
+          .vd-banner a      { width: 100% !important; justify-content: center !important; }
+          .vd-header        { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+          .vd-header a      { width: 100% !important; justify-content: center !important; }
+        }
+
+        .vd-booking-row {
+          display: flex; align-items: flex-start;
+          justify-content: space-between; gap: 8px; margin-bottom: 10px;
+        }
+        @media (max-width: 480px) {
+          .vd-booking-row   { flex-direction: column; gap: 6px; }
+          .vd-booking-row > span { align-self: flex-start; }
+        }
       `}</style>
     </VendorShell>
   );
