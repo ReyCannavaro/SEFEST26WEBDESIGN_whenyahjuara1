@@ -215,7 +215,6 @@ export default function HowItWorksPage() {
       <Footer />
 
       <style>{`
-        /* ── Hero ── */
         .hiw-hero {
           background: var(--forest);
           padding: 120px 24px 80px;
@@ -268,7 +267,6 @@ export default function HowItWorksPage() {
         }
         .hiw-btn { font-size: 14px !important; padding: 11px 24px !important; }
 
-        /* ── Layout helpers ── */
         .hiw-section { padding: 80px 24px; }
         .hiw-section-gray { background: var(--gray-50); }
         .hiw-section-white { background: var(--white); }
@@ -283,7 +281,6 @@ export default function HowItWorksPage() {
         .hiw-block { margin-bottom: 64px; }
         .hiw-divider { height: 1px; background: var(--gray-100); margin-bottom: 64px; }
 
-        /* ── Section header ── */
         .section-header {
           display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
           flex-wrap: wrap;
@@ -301,7 +298,6 @@ export default function HowItWorksPage() {
         }
         .section-header-sub { font-size: 14px; color: var(--text-secondary); }
 
-        /* ── How Steps ── */
         .how-steps-grid {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
@@ -333,7 +329,6 @@ export default function HowItWorksPage() {
         .step-title { font-weight: 700; font-size: 15px; color: var(--text-primary); margin-bottom: 8px; }
         .step-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
 
-        /* ── Rule Cards ── */
         .rules-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -354,7 +349,6 @@ export default function HowItWorksPage() {
         .rule-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
         .rule-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
 
-        /* ── Verification ── */
         .verification-list { display: flex; flex-direction: column; gap: 0; }
         .verification-item {
           display: flex; gap: 20px; align-items: flex-start;
@@ -380,7 +374,6 @@ export default function HowItWorksPage() {
         .verification-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
         .verification-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
 
-        /* ── Sanctions ── */
         .sanctions-box {
           background: #fff7ed; border: 1px solid #fed7aa;
           border-radius: var(--radius-xl); padding: 28px 32px;
@@ -397,7 +390,6 @@ export default function HowItWorksPage() {
         .sanctions-item { display: flex; align-items: center; gap: 8px; }
         .sanctions-item span { font-size: 14px; color: #7c2d12; }
 
-        /* ── CTA Box ── */
         .hiw-cta-box {
           background: var(--forest); border-radius: var(--radius-xl);
           padding: 40px 48px; position: relative; overflow: hidden;
@@ -429,9 +421,6 @@ export default function HowItWorksPage() {
           display: inline-flex; align-items: center; gap: 6px;
         }
 
-        /* ══ RESPONSIVE ══ */
-
-        /* Tablet ≤ 1024px */
         @media (max-width: 1024px) {
           .how-steps-grid {
             grid-template-columns: repeat(3, 1fr) !important;
@@ -443,7 +432,6 @@ export default function HowItWorksPage() {
           .hiw-section { padding: 60px 24px; }
         }
 
-        /* Mobile ≤ 768px */
         @media (max-width: 768px) {
           .how-steps-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .rules-grid { grid-template-columns: 1fr !important; }
@@ -463,7 +451,6 @@ export default function HowItWorksPage() {
           .section-header-title { font-size: 19px; }
         }
 
-        /* Mobile ≤ 640px */
         @media (max-width: 640px) {
           .hiw-hero { padding: 100px 16px 60px; }
           .hiw-hero-sub { font-size: 14px; }
