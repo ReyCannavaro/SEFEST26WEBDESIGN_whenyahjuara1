@@ -81,7 +81,8 @@ export default function VendorAvailabilityPage() {
   }, [viewDate, vendor]);
 
   function getEffectiveStatus(dateStr: string): DayStatus {
-    const d = new Date(dateStr); d.setHours(0, 0, 0, 0);
+    const [y, m, day] = dateStr.split('-').map(Number);
+    const d = new Date(y, m - 1, day);
     if (d < today) return 'past';
     if (pendingChanges[dateStr] !== undefined && pendingChanges[dateStr] !== null)
       return pendingChanges[dateStr] as DayStatus;
