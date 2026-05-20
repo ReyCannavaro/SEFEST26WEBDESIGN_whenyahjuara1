@@ -73,7 +73,7 @@ function formatPriceInput(v: string): string {
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3800); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 900, display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: type === 'success' ? '#0d3b2e' : '#dc2626', color: 'white', boxShadow: '0 8px 32px rgba(0,0,0,0.22)', fontSize: 14, fontWeight: 600, maxWidth: 360, animation: 'slideUp 0.3s ease' }}>
+    <div className="svc-toast" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: type === 'success' ? '#0d3b2e' : '#dc2626', color: 'white', boxShadow: '0 8px 32px rgba(0,0,0,0.22)', fontSize: 14, fontWeight: 600, maxWidth: 360, animation: 'slideUp 0.3s ease' }}>
       {type === 'success' ? <CheckCircle size={17} /> : <AlertCircle size={17} />}
       <span style={{ flex: 1 }}>{msg}</span>
       <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', display: 'flex', padding: 0 }}><X size={15} /></button>
@@ -167,9 +167,9 @@ function ServiceModal({
   const labelStyle: React.CSSProperties = { fontSize: 13, fontWeight: 600, color: '#374151', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 7 };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 500, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+    <div className="svc-overlay"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 540, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
+      <div className="svc-modal" style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 540, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 24px 18px', borderBottom: '1px solid #f1f5f9' }}>
           <div>
             <p style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginBottom: 2 }}>
@@ -215,7 +215,7 @@ function ServiceModal({
 
           <div>
             <label style={labelStyle}><DollarSign size={14} color="#0d3b2e" /> Rentang Harga <span style={{ color: '#ef4444' }}>*</span></label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 10, alignItems: 'center' }}>
+            <div className="svc-price-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 10, alignItems: 'center' }}>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 13, color: '#64748b', fontWeight: 600, pointerEvents: 'none' }}>Rp</span>
                 <input
@@ -225,7 +225,7 @@ function ServiceModal({
                   style={{ ...inputStyle, paddingLeft: 36 }}
                 />
               </div>
-              <span style={{ fontSize: 13, color: '#9ca3af', textAlign: 'center', userSelect: 'none' }}>s/d</span>
+              <span className="svc-price-sep" style={{ fontSize: 13, color: '#9ca3af', textAlign: 'center', userSelect: 'none' }}>s/d</span>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 13, color: '#64748b', fontWeight: 600, pointerEvents: 'none' }}>Rp</span>
                 <input
@@ -294,9 +294,9 @@ function DeleteModal({ service, vendorId, onClose, onDeleted }: {
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 600, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+    <div className="svc-overlay" style={{ zIndex: 600 }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 420, padding: '28px 26px', boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
+      <div className="svc-delete-modal" style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 420, padding: '28px 26px', boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
         <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#fef2f2', display: 'grid', placeItems: 'center', marginBottom: 16 }}>
           <TriangleAlert size={24} color="#dc2626" />
         </div>
@@ -472,14 +472,14 @@ export default function VendorServicesPage() {
 
   return (
     <VendorShell>
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '28px 24px 80px' }}>
+      <div className="vs-main-content" style={{ maxWidth: 900, margin: '0 auto', padding: '28px 24px 80px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#94a3b8', marginBottom: 28 }}>
           <Link href="/vendor/dashboard" style={{ color: '#94a3b8', textDecoration: 'none' }}>Dashboard</Link>
           <ArrowRight size={12} />
           <span style={{ color: '#0f172a', fontWeight: 600 }}>Kelola Layanan</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, marginBottom: 32, flexWrap: 'wrap' }}>
+        <div className="svc-header">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
               <div style={{ width: 38, height: 38, borderRadius: 10, background: '#0d3b2e', display: 'grid', placeItems: 'center' }}>
@@ -514,7 +514,7 @@ export default function VendorServicesPage() {
         )}
 
         {services.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
+          <div className="svc-stats">
             {[
               { label: 'Total Layanan', value: services.length, color: '#0d3b2e', bg: '#f0fdf4' },
               { label: 'Harga Terendah', value: formatPrice(Math.min(...services.map(s => s.price_min))), color: '#0d3b2e', bg: '#f0fdf4' },
@@ -582,11 +582,35 @@ export default function VendorServicesPage() {
       {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
       <style>{`
-        @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes slideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes shimmer  { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+        @keyframes spin     { to { transform: rotate(360deg); } }
+        @keyframes slideUp  { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
         .svc-grid { grid-template-columns: repeat(2,1fr); }
-        @media (max-width: 640px) { .svc-grid { grid-template-columns: 1fr !important; } }
+        .svc-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 28px; }
+        .svc-header { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:32px; flex-wrap:wrap; }
+        .svc-toast  { position:fixed; bottom:28px; right:28px; z-index:900; }
+        .svc-overlay { position:fixed; inset:0; z-index:500; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; padding:16px; }
+
+        @media (max-width: 640px) {
+          .svc-grid    { grid-template-columns: 1fr !important; }
+          .svc-stats   { grid-template-columns: repeat(3,1fr) !important; }
+          .svc-stats > div { padding: 12px 12px !important; }
+          .svc-stats p:last-child { font-size: 16px !important; }
+          .svc-header  { flex-direction: column; gap: 12px; }
+          .svc-header button { width: 100%; justify-content: center; }
+          .svc-toast   { bottom: 80px !important; right: 12px !important; left: 12px !important; max-width: 100% !important; }
+          .svc-overlay { align-items: flex-end !important; padding: 0 !important; }
+          .svc-modal   { border-radius: 20px 20px 0 0 !important; max-height: 94vh !important; }
+          .svc-delete-modal { border-radius: 20px 20px 0 0 !important; }
+          .svc-price-grid { grid-template-columns: 1fr !important; }
+          .svc-price-sep  { display: none !important; }
+        }
+
+        @media (max-width: 400px) {
+          .svc-stats { grid-template-columns: 1fr !important; }
+          .svc-stats > div { padding: 10px 12px !important; }
+        }
       `}</style>
     </VendorShell>
   );
