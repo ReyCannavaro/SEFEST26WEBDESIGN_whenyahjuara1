@@ -9,16 +9,16 @@ export default function NotFound() {
       alignItems: 'center',
       justifyContent: 'center',
       fontFamily: 'Inter, sans-serif',
-      padding: '24px',
+      padding: 'clamp(20px, 5vw, 40px)',
     }}>
-      <div style={{ textAlign: 'center', maxWidth: 480 }}>
-        <Link href="/" style={{ display: 'inline-block', marginBottom: 40 }}>
-          <img src="/logo_findor.jpg" alt="Findor" style={{ height: 44, width: 'auto', objectFit: 'contain' }} />
+      <div style={{ textAlign: 'center', maxWidth: 480, width: '100%', animation: 'fadeUp 0.6s ease both' }}>
+        <Link href="/" style={{ display: 'inline-block', marginBottom: 'clamp(28px, 5vw, 44px)' }}>
+          <img src="/logo_findor.jpg" alt="Findor" style={{ height: 40, width: 'auto', objectFit: 'contain' }} />
         </Link>
 
-        <div style={{ position: 'relative', marginBottom: 32 }}>
+        <div style={{ position: 'relative', marginBottom: 'clamp(20px, 4vw, 32px)' }}>
           <p style={{
-            fontSize: 'clamp(96px, 20vw, 160px)',
+            fontSize: 'clamp(100px, 22vw, 160px)',
             fontWeight: 900,
             color: '#0D3B2E',
             lineHeight: 1,
@@ -30,22 +30,24 @@ export default function NotFound() {
             404
           </p>
           <div style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <div style={{
-              width: 80, height: 80,
+              width: 'clamp(64px, 12vw, 80px)',
+              height: 'clamp(64px, 12vw, 80px)',
               borderRadius: '50%',
               background: 'linear-gradient(135deg, #0D3B2E 0%, #2D6A4F 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 8px 32px rgba(13,59,46,0.25)',
+              animation: 'popIn 0.5s 0.3s cubic-bezier(0.22,1,0.36,1) both',
             }}>
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="clamp(28px,5vw,36px)" height="clamp(28px,5vw,36px)"
+                viewBox="0 0 24 24" fill="none" stroke="white"
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                style={{ width: 'clamp(28px,5vw,36px)', height: 'clamp(28px,5vw,36px)' }}
+              >
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 <line x1="11" y1="8" x2="11" y2="14" />
@@ -56,47 +58,31 @@ export default function NotFound() {
         </div>
 
         <h1 style={{
-          fontSize: 26,
-          fontWeight: 800,
-          color: '#1A1917',
-          marginBottom: 10,
-          letterSpacing: '-0.5px',
+          fontSize: 'clamp(20px, 4vw, 26px)',
+          fontWeight: 800, color: '#1A1917',
+          marginBottom: 10, letterSpacing: '-0.5px',
         }}>
           Halaman Tidak Ditemukan
         </h1>
         <p style={{
-          fontSize: 15,
-          color: '#6B6960',
-          lineHeight: 1.7,
-          marginBottom: 36,
+          fontSize: 'clamp(13px, 2vw, 15px)',
+          color: '#6B6960', lineHeight: 1.7,
+          marginBottom: 'clamp(24px, 4vw, 36px)',
+          padding: '0 clamp(0px, 2vw, 16px)',
         }}>
           URL yang kamu kunjungi tidak ada atau sudah dipindahkan.
           Cek kembali alamatnya, atau kembali ke halaman utama.
         </p>
 
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/" style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: '#0D3B2E', color: 'white',
-            fontWeight: 600, fontSize: 15,
-            padding: '13px 28px', borderRadius: 9999,
-            textDecoration: 'none',
-            boxShadow: '0 4px 16px rgba(13,59,46,0.25)',
-          }}>
+        <div className="notfound-btns">
+          <Link href="/" className="btn-home">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
             Ke Beranda
           </Link>
-          <Link href="/search" style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'white', color: '#1A1917',
-            fontWeight: 600, fontSize: 15,
-            padding: '12px 28px', borderRadius: 9999,
-            textDecoration: 'none',
-            border: '1.5px solid #E2E0D9',
-          }}>
+          <Link href="/search" className="btn-search">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -106,6 +92,51 @@ export default function NotFound() {
         </div>
 
       </div>
+
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+          from { opacity: 0; transform: scale(0.6); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+
+        .notfound-btns {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+        .btn-home {
+          display: inline-flex; align-items: center; gap: 8px;
+          background: #0D3B2E; color: white;
+          font-weight: 600; font-size: 15px;
+          padding: 13px 28px; border-radius: 9999px;
+          text-decoration: none;
+          box-shadow: 0 4px 16px rgba(13,59,46,0.25);
+          transition: background 0.2s, box-shadow 0.2s;
+          white-space: nowrap;
+        }
+        .btn-home:hover { background: #1a5c44; box-shadow: 0 6px 20px rgba(13,59,46,0.32); }
+        .btn-search {
+          display: inline-flex; align-items: center; gap: 8px;
+          background: white; color: #1A1917;
+          font-weight: 600; font-size: 15px;
+          padding: 12px 28px; border-radius: 9999px;
+          text-decoration: none;
+          border: 1.5px solid #E2E0D9;
+          transition: border-color 0.2s, box-shadow 0.2s;
+          white-space: nowrap;
+        }
+        .btn-search:hover { border-color: #0D3B2E; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+
+        @media (max-width: 400px) {
+          .notfound-btns { flex-direction: column; align-items: stretch; }
+          .btn-home, .btn-search { justify-content: center; padding: 14px 20px; }
+        }
+      `}</style>
     </main>
   );
 }
