@@ -23,12 +23,17 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
 
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ??
+      new URL(request.url).origin;
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+        emailRedirectTo: `${appUrl}/auth/callback`,
       },
     });
 
