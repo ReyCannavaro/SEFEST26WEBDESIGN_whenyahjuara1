@@ -58,7 +58,7 @@ export default function RegisterPage() {
                 <Mail size={40} color="#059669" strokeWidth={1.5} />
                 <div style={{ position: 'absolute', inset: -6, borderRadius: '50%', border: '2px solid #a7f3d0', animation: 'ping 2s ease-out infinite' }} />
               </div>
-              <h2 className="rg-heading">Cek Inbox Kamu!</h2>
+              <h2 className="rg-heading">Cek Inbox Kamu! 📬</h2>
               <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7 }}>Kami sudah mengirim link verifikasi ke</p>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#f0fdf4', border: '1.5px solid #bbf7d0', borderRadius: 12, padding: '10px 18px', marginTop: 8 }}>
                 <Mail size={15} color="#16a34a" />
@@ -183,9 +183,11 @@ export default function RegisterPage() {
                     style={{
                       ...inputSt(focused === 'confirm'),
                       paddingRight: 44,
-                      borderColor: form.confirm && form.confirm !== form.password ? '#fca5a5'
+                      border: `1.5px solid ${
+                        form.confirm && form.confirm !== form.password ? '#fca5a5'
                         : form.confirm && form.confirm === form.password ? '#86efac'
-                        : focused === 'confirm' ? '#0d3b2e' : '#e2e8f0',
+                        : focused === 'confirm' ? '#0d3b2e' : '#e2e8f0'
+                      }`,
                     }}
                   />
                   <EyeBtn show={showConfirm} toggle={() => setShowConfirm(v => !v)} />
