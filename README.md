@@ -56,40 +56,6 @@ Gunakan akun berikut untuk mengeksplorasi setiap peran di platform Findor. Semua
 
 > **URL Aplikasi:** [https://findor.vercel.app](https://findor.vercel.app) *(sesuaikan dengan URL deployment kamu)*
 
-| Role | Email | Password |
-|---|---|---|
-| 👤 **User** | `reycannavarodev@gmail.com` | `12345678` |
-| 🏪 **Vendor** | `rennavarsz@gmail.com` | `12345678` |
-| 🛡️ **Admin** | `reycannavaro@gmail.com` | `12345678` |
-
-> ⚠️ **Catatan:** Akun admin (`admin@findor.com`) perlu didaftarkan terlebih dahulu lalu di-upgrade rolenya via SQL Editor Supabase:
-> ```sql
-> UPDATE user_profiles SET role = 'admin' WHERE email = 'admin@findor.com';
-> ```
-
-### Yang Bisa Dieksplorasi per Akun
-
-**👤 User — `reycannavarodev@gmail.com`**
-- Browse dan filter vendor di halaman `/search`
-- Lihat detail vendor, paket layanan, dan ulasan
-- Buat booking dan upload bukti DP
-- Simpan vendor favorit ke bookmarks
-- Kelola profil di `/profile`
-
-**🏪 Vendor — `rennavarsz@gmail.com`**
-- Dashboard statistik toko di `/vendor/dashboard`
-- Kelola katalog layanan di `/vendor/services`
-- Terima & konfirmasi booking di `/vendor/bookings`
-- Atur ketersediaan kalender di `/vendor/availability`
-- Lihat performa toko di `/vendor/analytics`
-
-**🛡️ Admin — `admin@findor.com`**
-- Review antrian pendaftaran vendor di `/admin/vendors`
-- Approve atau reject vendor beserta alasan
-- Manajemen seluruh pengguna di `/admin/users`
-
----
-
 ## Fitur Utama
 
 ### Untuk Pengguna (User)
